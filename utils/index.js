@@ -9,3 +9,7 @@ export const generateToken = (userId, name) => {
 		expiresIn: process.env.JWT_LIFETIME,
 	});
 };
+
+export const comparePassword = async (password, hashedPassword) => {
+	return await bcrypt.compare(password, hashedPassword);
+};
