@@ -1,3 +1,4 @@
+import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, UnauthenticatedError } from "../errors/index.js";
 import {
@@ -6,44 +7,42 @@ import {
 	hashPassword,
 } from "../utils/index.js";
 import { PrismaClient } from "@prisma/client";
+import { registeredUserSchema, type RegisteredUser } from "../schema/User.js";
+import type { LoginUserInput } from "../types/index.ts";
+
 const prisma = new PrismaClient();
-// @desc Login user
-// @route POST /api/v1/auth/login
-// @access Public
-export const loginUser = async (req, res) => {
-	const { email, password } = req.body;
+
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
+	const { email, password }: LoginUserInput = req.body;
+
 	if (!email || !password) {
 		throw new BadRequestError("Please provide email and password");
 	}
-	const user = await prisma.user.findUnique({
-		where: {
-			email,
-		},
-	});
+
+	const user = await prisma.user.findUnique({ where: { email } });
 
 	if (!user || !(await comparePassword(password, user.password))) {
 		throw new UnauthenticatedError("Invalid Credentials");
 	}
-	const token = generateToken(user.id, user.name);
 
+	const token = generateToken(user.id, user.name);
 	res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
 };
 
-// @desc Register user
-// @route POST /api/v1/auth/register
-// @access Public
-import { registeredUserSchema } from "../schema/User.js";
-export const registerUser = async (req, res) => {
-	const { name, email, password } = registeredUserSchema.parse(req.body);
-	const hashedPassword = await hashPassword(password);
+export const registerUser = async (
+	req: Request,
+	res: Response,
+): Promise<void> => {
+	const userData: RegisteredUser = registeredUserSchema.parse(req.body);
+	const hashedPassword = await hashPassword(userData.password);
+
 	const user = await prisma.user.create({
 		data: {
-			name,
-			email,
+			...userData,
 			password: hashedPassword,
 		},
 	});
-	const token = generateToken(user.id, user.name);
 
+	const token = generateToken(user.id, user.name);
 	res.status(StatusCodes.CREATED).json({ user: { name: user.name }, token });
 };

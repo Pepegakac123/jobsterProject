@@ -23,3 +23,5 @@ export const registeredUserSchema = z.object({
 			"Password must contain uppercase, number and special character",
 		),
 });
+
+export type RegisteredUser = z.infer<typeof registeredUserSchema>;
