@@ -25,7 +25,9 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 		throw new UnauthenticatedError("Invalid Credentials");
 	}
 	const token = generateToken(user.id, user.name);
-	res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
+	res
+		.status(StatusCodes.OK)
+		.json({ user: { name: user.name, id: user.id }, token });
 };
 
 export const registerUser = async (
@@ -43,5 +45,7 @@ export const registerUser = async (
 	});
 
 	const token = generateToken(user.id, user.name);
-	res.status(StatusCodes.CREATED).json({ user: { name: user.name }, token });
+	res
+		.status(StatusCodes.CREATED)
+		.json({ user: { name: user.name, id: user.id }, token });
 };

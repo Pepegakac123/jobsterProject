@@ -13,3 +13,9 @@ export interface LoginUserInput {
 	email: string;
 	password: string;
 }
+
+export interface CreateJobInput {
+	company: string;
+	position: string;
+	status: "PENDING" | "REJECTED" | "INTERVIEW" | "OFFER" | "ACCEPTED";
+}

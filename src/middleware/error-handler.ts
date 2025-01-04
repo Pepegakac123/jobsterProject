@@ -18,9 +18,14 @@ export default function errorHandlerMiddleware(
 				});
 			default:
 				return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-					message: "Database error occurred",
+					msg: "Database error occurred",
 				});
 		}
+	}
+	if (err instanceof Prisma.PrismaClientValidationError) {
+		return res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ msg: "Database error validation occurred" });
 	}
 
 	if (err instanceof z.ZodError) {

@@ -7,7 +7,7 @@ import authenticateUser from "./middleware/authentication.js";
 import authRouter from "./routes/auth.js";
 import jobsRouter from "./routes/jobs.js";
 
-const app: Express = express();
+export const app: Express = express();
 
 app.use(express.json());
 
