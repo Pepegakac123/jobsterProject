@@ -33,5 +33,7 @@ model Jobs{
 enum Status {
   PENDING
   REJECTED
+  INTERVIEW
+  OFFER
   ACCEPTED
 }
