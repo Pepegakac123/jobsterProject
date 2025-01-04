@@ -4,7 +4,7 @@
 import type { Request, Response } from "express";
 import type { CreateJobInput } from "../types/index.js";
 import { StatusCodes } from "http-status-codes";
-import BadRequestError from "../errors/bad-request.js";
+import { BadRequestError, NotFoundError } from "../errors/index.js";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 export const getAllJobs = async (req: Request, res: Response) => {
@@ -21,8 +21,24 @@ export const getAllJobs = async (req: Request, res: Response) => {
 
 // @desc Get Single Job
 // @route GET /api/v1/jobs/:id
-export const getSingleJob = (req: Request, res: Response) => {
-	res.send("get single job");
+export const getSingleJob = async (req: Request, res: Response) => {
+	const { id } = req.params;
+	if (!id || Number.isNaN(Number.parseInt(id))) {
+		throw new BadRequestError("Id must be an valid number");
+	}
+	if (!req.user?.userId) {
+		throw new BadRequestError("You must be logged in");
+	}
+	const job = await prisma.jobs.findUnique({
+		where: {
+			id: Number.parseInt(id),
+			createdBy: req.user.userId,
+		},
+	});
+	if (!job) {
+		throw new NotFoundError("Job not found");
+	}
+	res.status(StatusCodes.OK).json(job);
 };
 
 // @desc Create Job

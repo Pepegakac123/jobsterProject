@@ -188,4 +188,81 @@ describe("Jobs endpoints", () => {
 			expect(response.body).toHaveProperty("msg", "Authentication Invalid");
 		});
 	});
+	describe("GET /api/v1/jobs/:id", () => {
+		it("Should return job", async () => {
+			const job = await prisma.jobs.create({
+				data: {
+					company: "Vitest Company",
+					position: "Tester",
+					status: "PENDING",
+					createdBy: userId,
+				},
+			});
+			const response = await request(app)
+				.get(`/api/v1/jobs/${job.id}`)
+				.set("Authorization", `Bearer ${token}`);
+			expect(response.status).toBe(200);
+			expect(response.body).toHaveProperty("company", "Vitest Company");
+			expect(response.body).toHaveProperty("position", "Tester");
+			expect(response.body).toHaveProperty("status", "PENDING");
+		});
+		it("should return 404 error if job not found", async () => {
+			const job = await prisma.jobs.create({
+				data: {
+					company: "Vitest Company",
+					position: "Tester",
+					status: "PENDING",
+					createdBy: userId,
+				},
+			});
+			const response = await request(app)
+				.get("/api/v1/jobs/0")
+				.set("Authorization", `Bearer ${token}`);
+			expect(response.status).toBe(404);
+			expect(response.body).toHaveProperty("msg", "Job not found");
+		});
+		it("Should throw 400 error if id is invalid", async () => {
+			const job = await prisma.jobs.create({
+				data: {
+					company: "Vitest Company",
+					position: "Tester",
+					status: "PENDING",
+					createdBy: userId,
+				},
+			});
+			const response = await request(app)
+				.get("/api/v1/jobs/arkana")
+				.set("Authorization", `Bearer ${token}`);
+			expect(response.status).toBe(400);
+			expect(response.body).toHaveProperty("msg", "Id must be an valid number");
+		});
+		it("Should throw 401 error if token invalid", async () => {
+			const job = await prisma.jobs.create({
+				data: {
+					company: "Vitest Company",
+					position: "Tester",
+					status: "PENDING",
+					createdBy: userId,
+				},
+			});
+			const response = await request(app)
+				.get(`/api/v1/jobs/${job.id}`)
+				.set("Authorization", "Bearer invalid_token");
+			expect(response.status).toBe(401);
+			expect(response.body).toHaveProperty("msg", "Authentication Invalid");
+		});
+		it("Should throw 401 error if token not provided", async () => {
+			const job = await prisma.jobs.create({
+				data: {
+					company: "Vitest Company",
+					position: "Tester",
+					status: "PENDING",
+					createdBy: userId,
+				},
+			});
+			const response = await request(app).get(`/api/v1/jobs/${job.id}`);
+			expect(response.status).toBe(401);
+			expect(response.body).toHaveProperty("msg", "Authentication Invalid");
+		});
+	});
 });
