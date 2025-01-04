@@ -7,8 +7,16 @@ import { StatusCodes } from "http-status-codes";
 import BadRequestError from "../errors/bad-request.js";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-export const getAllJobs = (req: Request, res: Response) => {
-	res.send("get all jobs");
+export const getAllJobs = async (req: Request, res: Response) => {
+	if (!req.user?.userId) {
+		throw new BadRequestError("You must be logged in");
+	}
+	const jobs = await prisma.jobs.findMany({
+		where: {
+			createdBy: req.user.userId,
+		},
+	});
+	res.status(StatusCodes.OK).json(jobs);
 };
 
 // @desc Get Single Job

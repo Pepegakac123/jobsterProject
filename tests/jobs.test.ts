@@ -147,4 +147,45 @@ describe("Jobs endpoints", () => {
 			]).toContain(response.body.msg);
 		});
 	});
+	describe("GET /api/v1/jobs", () => {
+		it("Should return zero jobs", async () => {
+			const response = await request(app)
+				.get("/api/v1/jobs")
+				.set("Authorization", `Bearer ${token}`);
+			expect(response.status).toBe(200);
+			console.log(response.body);
+			expect(response.body).toBeInstanceOf(Array);
+			expect(response.body.length).toBe(0);
+		});
+		it("Should return all jobs", async () => {
+			const job = await prisma.jobs.create({
+				data: {
+					company: "Vitest Company",
+					position: "Tester",
+					status: "PENDING",
+					createdBy: userId,
+				},
+			});
+			console.log(job);
+			const response = await request(app)
+				.get("/api/v1/jobs")
+				.set("Authorization", `Bearer ${token}`);
+			expect(response.status).toBe(200);
+			console.log(response.body);
+			expect(response.body).toBeInstanceOf(Array);
+			expect(response.body.length).toBe(1);
+		});
+		it("Should throw 401 error if token invalid", async () => {
+			const response = await request(app)
+				.get("/api/v1/jobs")
+				.set("Authorization", "Bearer invalid_token");
+			expect(response.status).toBe(401);
+			expect(response.body).toHaveProperty("msg", "Authentication Invalid");
+		});
+		it("Should throw 401 error if token not provided", async () => {
+			const response = await request(app).get("/api/v1/jobs");
+			expect(response.status).toBe(401);
+			expect(response.body).toHaveProperty("msg", "Authentication Invalid");
+		});
+	});
 });
