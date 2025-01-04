@@ -4,7 +4,7 @@
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"outDir": "./dist",
-		"rootDir": "./src",
+		"rootDir": ".", // Zmiana z ./src na .
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
@@ -12,6 +12,7 @@
 		"allowJs": true,
 		"resolveJsonModule": true
 	},
+	"include": ["src/**/*", "tests/**/*", "vitest.config.mts"],
 	"ts-node": {
 		"esm": true,
 		"experimentalSpecifierResolution": "node"
