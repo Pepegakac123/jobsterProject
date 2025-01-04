@@ -24,7 +24,6 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 	if (!user || !(await comparePassword(password, user.password))) {
 		throw new UnauthenticatedError("Invalid Credentials");
 	}
-
 	const token = generateToken(user.id, user.name);
 	res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
 };

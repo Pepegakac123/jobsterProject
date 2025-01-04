@@ -18,4 +18,20 @@ model User {
   name      String   @db.VarChar(50)
   email     String   @unique @db.VarChar(255)
   password  String   @db.VarChar(255)
+  jobs Jobs[]
+}
+
+model Jobs{
+  id Int @id @default(autoincrement())
+  company String @db.VarChar(50)
+  position String @db.VarChar(100)
+  status Status @default(PENDING)
+  createdBy Int 
+  user User @relation(fields: [createdBy], references: [id])
+}
+
+enum Status {
+  PENDING
+  REJECTED
+  ACCEPTED
 }
