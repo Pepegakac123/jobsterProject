@@ -12,11 +12,27 @@ export default function errorHandlerMiddleware(
 ) {
 	if (err instanceof Prisma.PrismaClientKnownRequestError) {
 		switch (err.code) {
-			case "P2002":
+			case "P2002": {
+				const target = err.meta?.target as string[];
+				const field = target?.[target.length - 1] || "field";
 				return res.status(StatusCodes.BAD_REQUEST).json({
-					msg: `${err.meta?.target} already exists`,
+					msg: `${field} already exists`,
+				});
+			}
+			case "P2014":
+				return res.status(StatusCodes.BAD_REQUEST).json({
+					msg: "Invalid ID provided",
+				});
+			case "P2003":
+				return res.status(StatusCodes.BAD_REQUEST).json({
+					msg: "Invalid relation data provided",
+				});
+			case "P2025":
+				return res.status(StatusCodes.NOT_FOUND).json({
+					msg: "Record not found",
 				});
 			default:
+				console.error("Prisma Error:", err);
 				return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
 					msg: "Database error occurred",
 				});
