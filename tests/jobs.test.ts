@@ -23,6 +23,10 @@ const TEST_JOBS = {
 			position: "Tester",
 			status: "REJECTED",
 		},
+		updated: {
+			company: "Vitest Company Updated",
+			status: "INTERVIEW",
+		},
 	},
 	invalid: {
 		emptyCompany: {
@@ -38,6 +42,7 @@ const TEST_JOBS = {
 };
 
 // Pomocnicze funkcje
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 const createTestJob = async (token: string, jobData: any) => {
 	return request(app)
 		.post("/api/v1/jobs")
@@ -94,7 +99,7 @@ describe("Jobs API", () => {
 				const response = await createTestJob(token, TEST_JOBS.valid.basic);
 
 				expect(response.status).toBe(201);
-				expect(response.body).toMatchObject({
+				expect(response.body.job).toMatchObject({
 					company: TEST_JOBS.valid.basic.company,
 					position: TEST_JOBS.valid.basic.position,
 					status: "PENDING",
@@ -117,7 +122,7 @@ describe("Jobs API", () => {
 				);
 
 				expect(response.status).toBe(201);
-				expect(response.body).toMatchObject({
+				expect(response.body.job).toMatchObject({
 					status: TEST_JOBS.valid.withCustomStatus.status,
 				});
 			});
@@ -177,8 +182,8 @@ describe("Jobs API", () => {
 				.set("Authorization", `Bearer ${token}`);
 
 			expect(response.status).toBe(200);
-			expect(response.body).toBeInstanceOf(Array);
-			expect(response.body).toHaveLength(0);
+			expect(response.body.jobs).toBeInstanceOf(Array);
+			expect(response.body.jobs).toHaveLength(0);
 		});
 
 		it("zwraca wszystkie oferty dla zalogowanego użytkownika", async () => {
@@ -195,9 +200,9 @@ describe("Jobs API", () => {
 				.set("Authorization", `Bearer ${token}`);
 
 			expect(response.status).toBe(200);
-			expect(response.body).toBeInstanceOf(Array);
-			expect(response.body).toHaveLength(1);
-			expect(response.body[0]).toMatchObject(TEST_JOBS.valid.basic);
+			expect(response.body.jobs).toBeInstanceOf(Array);
+			expect(response.body.jobs).toHaveLength(1);
+			expect(response.body.jobs[0]).toMatchObject(TEST_JOBS.valid.basic);
 		});
 	});
 
@@ -213,7 +218,7 @@ describe("Jobs API", () => {
 			const response = await getTestJob(token, job.id);
 
 			expect(response.status).toBe(200);
-			expect(response.body).toMatchObject(TEST_JOBS.valid.basic);
+			expect(response.body.job).toMatchObject(TEST_JOBS.valid.basic);
 		});
 
 		it("zwraca 404 gdy oferta nie istnieje", async () => {
@@ -230,6 +235,145 @@ describe("Jobs API", () => {
 
 			expect(response.status).toBe(400);
 			expect(response.body).toHaveProperty("msg", "Id must be an valid number");
+		});
+	});
+	describe("Modyfikacja oferty pracy (PATCH /api/v1/jobs/:id)", () => {
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		let testJob: any; // typ możesz dostosować do swojego modelu Job
+
+		beforeEach(async () => {
+			// Tworzymy job przed każdym testem
+			testJob = await prisma.jobs.create({
+				data: {
+					...TEST_JOBS.valid.basic,
+					createdBy: userId,
+				},
+			});
+		});
+
+		describe("gdy dane są poprawne", () => {
+			it("modyfikuje wszystkie pola oferty", async () => {
+				const response = await request(app)
+					.patch(`/api/v1/jobs/${testJob.id}`)
+					.set("Authorization", `Bearer ${token}`)
+					.send(TEST_JOBS.valid.updated);
+
+				expect(response.status).toBe(200);
+				expect(response.body.job).toMatchObject(TEST_JOBS.valid.updated);
+
+				// Sprawdzenie w bazie danych
+				const updatedJob = await prisma.jobs.findUnique({
+					where: { id: testJob.id },
+				});
+				expect(updatedJob).toMatchObject(TEST_JOBS.valid.updated);
+			});
+
+			it("modyfikuje pojedyncze pole oferty", async () => {
+				const partialUpdate = { company: "Partially Updated Company" };
+
+				const response = await request(app)
+					.patch(`/api/v1/jobs/${testJob.id}`)
+					.set("Authorization", `Bearer ${token}`)
+					.send(partialUpdate);
+
+				expect(response.status).toBe(200);
+				expect(response.body.job.company).toBe(partialUpdate.company);
+				expect(response.body.job.position).toBe(testJob.position); // pozostałe pola nie powinny się zmienić
+			});
+		});
+
+		describe("gdy występują błędy", () => {
+			it("zwraca 404 gdy job nie istnieje", async () => {
+				const response = await request(app)
+					.patch("/api/v1/jobs/99999")
+					.set("Authorization", `Bearer ${token}`)
+					.send(TEST_JOBS.valid.updated);
+
+				expect(response.status).toBe(404);
+				expect(response.body).toHaveProperty("msg", "Job not found");
+			});
+
+			it("zwraca 401 gdy użytkownik próbuje zmodyfikować nie swoją ofertę", async () => {
+				// Tworzymy nowego użytkownika
+				const otherUserResponse = await request(app)
+					.post("/api/v1/auth/register")
+					.send({
+						...TEST_USER,
+						email: "other@mail.com",
+					});
+				console.log(otherUserResponse.body.token);
+				const response = await request(app)
+					.patch(`/api/v1/jobs/${testJob.id}`)
+					.set("Authorization", `Bearer ${otherUserResponse.body.token}`)
+					.send(TEST_JOBS.valid.updated);
+
+				expect(response.status).toBe(401);
+				expect(response.body).toHaveProperty(
+					"msg",
+					"Not authorized to access this job",
+				);
+			});
+
+			it("zwraca 400 gdy status jest nieprawidłowy", async () => {
+				const response = await request(app)
+					.patch(`/api/v1/jobs/${testJob.id}`)
+					.set("Authorization", `Bearer ${token}`)
+					.send({ status: "INVALID_STATUS" });
+
+				expect(response.status).toBe(400);
+				expect(response.body).toHaveProperty("msg", "Invalid status value");
+			});
+		});
+	});
+	describe("Usuwanie oferty pracy (DELETE /api/v1/jobs/:id)", () => {
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		let testJob: any;
+
+		beforeEach(async () => {
+			// Tworzymy job przed każdym testem
+			testJob = await prisma.jobs.create({
+				data: {
+					...TEST_JOBS.valid.basic,
+					createdBy: userId,
+				},
+			});
+		});
+		describe("gdy dane są poprawne", () => {
+			it("Usuwa Ofertę", async () => {
+				const response = await request(app)
+					.delete(`/api/v1/jobs/${testJob.id}`)
+					.set("Authorization", `Bearer ${token}`);
+				console.log(response.body);
+				expect(response.status).toBe(200);
+				const deletedJob = await prisma.jobs.findUnique({
+					where: { id: testJob.id },
+				});
+				expect(deletedJob).toBeNull();
+			});
+		});
+		describe("gdy występują błędy", () => {
+			it("Zwraca 404 gdy job nie istnieje", async () => {
+				const response = await request(app)
+					.delete("/api/v1/jobs/99999")
+					.set("Authorization", `Bearer ${token}`);
+
+				expect(response.status).toBe(404);
+			});
+			it("zwraca 401 gdy użytkownik próbuje usunąć nie swoją ofertę", async () => {
+				// Tworzymy nowego użytkownika
+				const otherUserResponse = await request(app)
+					.post("/api/v1/auth/register")
+					.send({
+						...TEST_USER,
+						email: "other@mail.com",
+					});
+
+				const response = await request(app)
+					.delete(`/api/v1/jobs/${testJob.id}`)
+					.set("Authorization", `Bearer ${otherUserResponse.body.token}`);
+
+				expect(response.status).toBe(401);
+			});
 		});
 	});
 });
