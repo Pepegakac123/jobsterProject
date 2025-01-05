@@ -7,9 +7,24 @@ import authenticateUser from "./middleware/authentication.js";
 import authRouter from "./routes/auth.js";
 import jobsRouter from "./routes/jobs.js";
 
-export const app: Express = express();
+// extra security
+import helmet from "helmet";
+import rateLimiter from "express-rate-limit";
+import cors from "cors";
+import xss from "xss-clean";
 
+export const app: Express = express();
+app.set("trust proxy", 1);
+app.use(
+	rateLimiter({
+		windowMs: 15 * 60 * 1000, // 15 minutes
+		max: 100, //limit each IP to 100 request per windowsMs
+	}),
+);
 app.use(express.json());
+app.use(cors());
+app.use(helmet());
+app.use(xss());
 
 app.get("/", (req: Request, res: Response) => {
 	res.send("jobs api");
