@@ -184,7 +184,7 @@ project/
 │   │   └── utils/   # Narzędzia pomocnicze
 │   └── package.json
 │
-└── package.json          # Główny package.json dla monorepo
+
 ```
 
 <!-- ### Rozwiązywanie problemów
