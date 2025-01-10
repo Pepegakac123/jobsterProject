@@ -13,8 +13,8 @@ export default function errorHandlerMiddleware(
 	if (err instanceof Prisma.PrismaClientKnownRequestError) {
 		switch (err.code) {
 			case "P2002": {
-				const target = err.meta?.target as string[];
-				const field = target?.[target.length - 1] || "field";
+				const target = err.meta?.target as string;
+				const field = target.split("_")[1];
 				return res.status(StatusCodes.BAD_REQUEST).json({
 					msg: `${field} already exists`,
 				});

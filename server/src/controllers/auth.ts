@@ -7,7 +7,12 @@ import {
 	hashPassword,
 } from "../utils/index.js";
 import { PrismaClient } from "@prisma/client";
-import { registeredUserSchema, type RegisteredUser } from "../schema/User.js";
+import {
+	registeredUserSchema,
+	type UpdatedUser,
+	UpdatedUserSchema,
+	type RegisteredUser,
+} from "../schema/User.js";
 import type { LoginUserInput } from "../types/index.ts";
 
 const prisma = new PrismaClient();
@@ -25,9 +30,15 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 		throw new UnauthenticatedError("Invalid Credentials");
 	}
 	const token = generateToken(user.id, user.name);
-	res
-		.status(StatusCodes.OK)
-		.json({ user: { name: user.name, id: user.id }, token });
+	res.status(StatusCodes.OK).json({
+		user: {
+			email: user.email,
+			lastName: user.lastName,
+			location: user.location,
+			name: user.name,
+			token,
+		},
+	});
 };
 
 export const registerUser = async (
@@ -45,7 +56,52 @@ export const registerUser = async (
 	});
 
 	const token = generateToken(user.id, user.name);
-	res
-		.status(StatusCodes.CREATED)
-		.json({ user: { name: user.name, id: user.id }, token });
+	res.status(StatusCodes.CREATED).json({
+		user: {
+			email: user.email,
+			lastName: user.lastName,
+			location: user.location,
+			name: user.name,
+			token,
+		},
+	});
+};
+
+export const updateUser = async (
+	req: Request,
+	res: Response,
+): Promise<void> => {
+	const userData: UpdatedUser = UpdatedUserSchema.parse(req.body);
+	const { email, name, lastName, location } = userData;
+	const userId = req.user?.userId;
+	if (!userId) throw new BadRequestError("You must be logged in");
+
+	if (email) {
+		const existingUser = await prisma.user.findUnique({
+			where: {
+				email,
+				NOT: { id: userId },
+			},
+		});
+		if (existingUser) {
+			throw new BadRequestError("Email already exists");
+		}
+	}
+
+	const user = await prisma.user.update({
+		where: { id: userId },
+		data: { name, lastName, location, email },
+	});
+
+	const token = generateToken(user.id, user.name);
+
+	res.status(StatusCodes.OK).json({
+		user: {
+			email: user.email,
+			lastName: user.lastName,
+			location: user.location,
+			name: user.name,
+			token,
+		},
+	});
 };

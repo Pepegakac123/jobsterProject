@@ -16,8 +16,10 @@ datasource db {
 model User {
   id        Int      @id @default(autoincrement())
   name      String   @db.VarChar(50)
+  lastName  String   @db.VarChar(50) @default("lastName")
   email     String   @unique @db.VarChar(255)
   password  String   @db.VarChar(255)
+  location  String  @db.VarChar(50) @default("my city")
   jobs Jobs[]
 }
 

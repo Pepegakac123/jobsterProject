@@ -1,3 +1,4 @@
+import path from "node:path";
 import "express-async-errors";
 import express from "express";
 import type { Express, Request, Response, NextFunction } from "express";
@@ -9,26 +10,27 @@ import jobsRouter from "./routes/jobs.js";
 
 // extra security
 import helmet from "helmet";
-import rateLimiter from "express-rate-limit";
-import cors from "cors";
+// import rateLimiter from "express-rate-limit";
+
 import xss from "xss-clean";
 
 export const app: Express = express();
-app.set("trust proxy", 1);
-app.use(
-	rateLimiter({
-		windowMs: 15 * 60 * 1000, // 15 minutes
-		max: 100, //limit each IP to 100 request per windowsMs
-	}),
-);
+// app.set("trust proxy", 1);
+// app.use(
+// 	rateLimiter({
+// 		windowMs: 15 * 60 * 1000, // 15 minutes
+// 		max: 100, //limit each IP to 100 request per windowsMs
+// 	}),
+// );
+// app.use(express.static(path.resolve(__dirname, "./client/build")));
 app.use(express.json());
-app.use(cors());
 app.use(helmet());
 app.use(xss());
 
-app.get("/", (req: Request, res: Response) => {
-	res.send("jobs api");
-});
+// // serve index.html
+// app.get('*', (req, res) => {
+// 	res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
+//   });
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/jobs", authenticateUser, jobsRouter);

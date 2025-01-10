@@ -27,6 +27,7 @@
 		"jsonwebtoken": "^8.5.1",
 		"rate-limiter": "^0.2.0",
 		"swagger-ui-express": "^4.1.6",
+		"xss-clean": "^0.1.4",
 		"yamljs": "^0.3.0",
 		"zod": "^3.24.1"
 	},
