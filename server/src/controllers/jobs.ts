@@ -18,7 +18,7 @@ export const getAllJobs = async (req: Request, res: Response) => {
 	if (!req.user?.userId) {
 		throw new BadRequestError("You must be logged in");
 	}
-	// Destrukturyzacja query params z typowaniem
+
 	const {
 		search,
 		status,
