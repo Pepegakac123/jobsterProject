@@ -19,7 +19,19 @@ export const getAllJobs = async (req: Request, res: Response) => {
 		throw new BadRequestError("You must be logged in");
 	}
 	// Destrukturyzacja query params z typowaniem
-	const { search, status, sort, jobType } = req.query as SearchQueryOptions;
+	const {
+		search,
+		status,
+		sort,
+		jobType,
+		page = "1",
+		limit = "10",
+	} = req.query as SearchQueryOptions;
+
+	//Paginacja
+	const currentPage = Math.max(1, Number(page));
+	const pageSize = Math.max(1, Number(limit));
+	const skip = (currentPage - 1) * pageSize;
 
 	// Budowanie klauzuli where
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -29,20 +41,32 @@ export const getAllJobs = async (req: Request, res: Response) => {
 	);
 	const orderBy = buildOrderClause(sort as string);
 
+	// Pobieranie jobów z sortowaniem
+	const [totalJobs, jobs] = await Promise.all([
+		prisma.jobs.count({ where }), // całkowita liczba rekordów
+		prisma.jobs.findMany({
+			where,
+			orderBy,
+			skip,
+			take: pageSize,
+		}),
+	]);
+	const numOfPages = Math.ceil(totalJobs / pageSize);
 	const queryValues = {
 		...(search ? { search } : {}),
 		...(status && status !== "all" ? { status } : {}),
 		...(jobType && jobType !== "all" ? { jobType } : {}),
 		...(sort ? { sort } : {}),
+		page: currentPage,
+		limit: pageSize,
 	};
 
-	// Pobieranie jobów z sortowaniem
-	const jobs = await prisma.jobs.findMany({
-		where,
-		orderBy,
+	res.status(StatusCodes.OK).json({
+		...queryValues,
+		numOfPages,
+		totalJobs,
+		jobs,
 	});
-
-	res.status(StatusCodes.OK).json({ jobs, ...queryValues, count: jobs.length });
 };
 
 export const getSingleJob = async (req: Request, res: Response) => {

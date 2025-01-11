@@ -36,4 +36,6 @@ export interface SearchQueryOptions {
 	status?: JobStatus;
 	sort?: "latest" | "oldest" | "a-z" | "z-a";
 	jobType?: JobType;
+	page?: string;
+	limit?: string;
 }
