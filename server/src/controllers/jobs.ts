@@ -1,24 +1,48 @@
 import type { Request, Response } from "express";
-import type { CreateJobInput } from "../types/index.js";
+import type {
+	CreateJobInput,
+	QueryOptions,
+	SearchQueryOptions,
+} from "../types/index.js";
 import { StatusCodes } from "http-status-codes";
 import {
 	BadRequestError,
 	NotFoundError,
 	UnauthenticatedError,
 } from "../errors/index.js";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, type Status } from "@prisma/client";
+import { buildOrderClause, buildWhereClause } from "../utils/index.js";
 const prisma = new PrismaClient();
 
 export const getAllJobs = async (req: Request, res: Response) => {
 	if (!req.user?.userId) {
 		throw new BadRequestError("You must be logged in");
 	}
+	// Destrukturyzacja query params z typowaniem
+	const { search, status, sort, jobType } = req.query as SearchQueryOptions;
+
+	// Budowanie klauzuli where
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	const where: any = buildWhereClause(
+		{ search, status, jobType },
+		req.user.userId,
+	);
+	const orderBy = buildOrderClause(sort as string);
+
+	const queryValues = {
+		...(search ? { search } : {}),
+		...(status && status !== "all" ? { status } : {}),
+		...(jobType && jobType !== "all" ? { jobType } : {}),
+		...(sort ? { sort } : {}),
+	};
+
+	// Pobieranie jobów z sortowaniem
 	const jobs = await prisma.jobs.findMany({
-		where: {
-			createdBy: req.user.userId,
-		},
+		where,
+		orderBy,
 	});
-	res.status(StatusCodes.OK).json({ jobs });
+
+	res.status(StatusCodes.OK).json({ jobs, ...queryValues, count: jobs.length });
 };
 
 export const getSingleJob = async (req: Request, res: Response) => {
