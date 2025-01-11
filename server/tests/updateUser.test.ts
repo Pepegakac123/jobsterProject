@@ -11,7 +11,6 @@ import request from "supertest";
 import { app } from "../src/app.js";
 import { PrismaClient } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
-import Test from "supertest/lib/test.js";
 const prisma = new PrismaClient();
 
 // Stałe testowe
@@ -77,11 +76,11 @@ describe("Update User API", () => {
 	let token: string;
 	let userId: number;
 
-	beforeAll(async () => {
-		// Czyszczenie bazy danych
-		await prisma.jobs.deleteMany();
-		await prisma.user.deleteMany();
-	});
+	// beforeAll(async () => {
+	// 	// Czyszczenie bazy danych
+	// 	await prisma.jobs.deleteMany();
+	// 	await prisma.user.deleteMany();
+	// });
 
 	beforeEach(async () => {
 		// Tworzenie użytkownika testowego
@@ -93,12 +92,14 @@ describe("Update User API", () => {
 	});
 
 	afterEach(async () => {
-		await prisma.user.deleteMany();
+		await prisma.user.delete({
+			where: {
+				email: TEST_USER.email,
+			},
+		});
 	});
 
 	afterAll(async () => {
-		await prisma.jobs.deleteMany();
-		await prisma.user.deleteMany();
 		await prisma.$disconnect();
 	});
 
@@ -108,7 +109,7 @@ describe("Update User API", () => {
 				.patch("/api/v1/auth/update")
 				.set("Authorization", `Bearer ${token}`)
 				.send(TEST_DATA.valid.changedName);
-
+			console.log(response.body.user);
 			expectValidUserResponse(response, TEST_DATA.valid.changedName);
 		});
 
@@ -156,6 +157,12 @@ describe("Update User API", () => {
 
 			expectInvalidResponse(response);
 			expect(response.body.msg).toMatch("Email already exists");
+
+			await prisma.user.delete({
+				where: {
+					email: TEST_DATA.invalid.alreadyExistingEmail.email,
+				},
+			});
 		});
 	});
 });
