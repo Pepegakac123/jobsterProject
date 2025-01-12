@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import type { SearchQueryOptions, UserPayload } from "../types/index.js";
-import type { Prisma, Status } from "@prisma/client";
+import { PrismaClient, type Prisma, type Status } from "@prisma/client";
+const prisma = new PrismaClient();
 
 export const hashPassword = async (password: string): Promise<string> => {
 	return await bcrypt.hash(password, 10);
@@ -69,4 +70,52 @@ export const buildOrderClause = (
 	}
 
 	return orderBy;
+};
+
+export const getNumberOfApplicationsByMonths = async (userId: number) => {
+	const fourMonthsAgo = new Date();
+	fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4);
+
+	const monthlyApplications = await prisma.jobs.findMany({
+		where: {
+			createdBy: userId,
+			createdAt: {
+				gte: fourMonthsAgo, // greater than or equal
+			},
+		},
+		select: {
+			createdAt: true,
+		},
+	});
+
+	// Grupowanie po miesiącach w JavaScript
+	const monthlyStats = monthlyApplications.reduce(
+		(acc, { createdAt }) => {
+			const monthKey = `${createdAt.getFullYear()}-${String(createdAt.getMonth() + 1).padStart(2, "0")}-01`;
+			acc[monthKey] = (acc[monthKey] || 0) + 1;
+			return acc;
+		},
+		{} as Record<string, number>,
+	);
+
+	// Konwersja na tablicę i sortowanie
+	const results = Object.entries(monthlyStats)
+		.map(([month, count]) => ({ month, count }))
+		.sort((a, b) => b.month.localeCompare(a.month));
+
+	return results;
+};
+export const getJobsByStatus = async (userId: number) => {
+	const jobsByStatus = await prisma.jobs.groupBy({
+		by: ["status"],
+		_count: true,
+		where: {
+			createdBy: userId,
+			status: { in: ["PENDING", "INTERVIEW", "REJECTED"] },
+		},
+	});
+	return jobsByStatus.map((job) => ({
+		status: job.status,
+		count: job._count,
+	}));
 };

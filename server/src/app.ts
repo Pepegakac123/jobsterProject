@@ -7,21 +7,16 @@ import errorHandlerMiddleware from "./middleware/error-handler.js";
 import authenticateUser from "./middleware/authentication.js";
 import authRouter from "./routes/auth.js";
 import jobsRouter from "./routes/jobs.js";
+import statsRouter from "./routes/stats.js";
 
 // extra security
 import helmet from "helmet";
-// import rateLimiter from "express-rate-limit";
 
 import xss from "xss-clean";
 
 export const app: Express = express();
-// app.set("trust proxy", 1);
-// app.use(
-// 	rateLimiter({
-// 		windowMs: 15 * 60 * 1000, // 15 minutes
-// 		max: 100, //limit each IP to 100 request per windowsMs
-// 	}),
-// );
+app.set("trust proxy", 1);
+
 // app.use(express.static(path.resolve(__dirname, "./client/build")));
 app.use(express.json());
 app.use(helmet());
@@ -33,6 +28,7 @@ app.use(xss());
 //   });
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/stats", authenticateUser, statsRouter);
 app.use("/api/v1/jobs", authenticateUser, jobsRouter);
 
 app.use(notFoundMiddleware);
