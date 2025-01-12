@@ -7,45 +7,64 @@
 [![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)](https://www.prisma.io/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-Job Application Tracker to fullstackowa aplikacja zbudowana w TypeScript, wykorzystująca React z Vite po stronie frontendu oraz Express.js i Prisma ORM po stronie backendu. Aplikacja umożliwia użytkownikom śledzenie procesu aplikacji o pracę, zarządzanie statusami rekrutacji i przechowywanie istotnych informacji o potencjalnych pracodawcach.
+Job Application Tracker to projekt fullstackowy, który powstał jako narzędzie do nauki nowoczesnego stosu technologicznego w web developmencie. Backend jest już w pełni funkcjonalny, napisany w TypeScript z Express.js i Prisma ORM. Frontend jest obecnie w fazie rozwoju - buduję go w React z Vite. Aplikacja pozwala śledzić swoje aplikacje o pracę, zarządzać ich statusami i analizować podstawowe statystyki.
 
 ## 🔥 Główne Funkcjonalności
 
 ### Backend
-- Autentykacja użytkowników (JWT)
-- CRUD dla ofert pracy
-- Zarządzanie statusami rekrutacji
-- Walidacja danych (Zod)
-- Testy integracyjne (Vitest)
-- TypeScript dla bezpieczeństwa typów
-- Obsługa błędów middleware
-- Rate limiting i zabezpieczenia
+- **System Autentykacji**:
+  - Rejestracja i logowanie użytkowników
+  - JWT (JSON Web Tokens) dla bezpiecznej autoryzacji
+  - Middleware dla ochrony endpointów
+  - Specjalne zabezpieczenia dla konta testowego
+  - Rate limiting dla endpointów auth (15 min window)
 
-### Frontend
-- React + TypeScript
-- Vite jako bundler
-- Tailwind CSS dla stylowania
-- shadcn/ui dla komponentów UI
-- Testy komponentów (Vitest + Testing Library)
-- Responsywny design
+- **Zarządzanie Ofertami Pracy**:
+  - Pełne operacje CRUD
+  - Zaawansowane filtrowanie i wyszukiwanie ofert
+  - Paginacja wyników
+  - Sortowanie ofert (najnowsze, najstarsze, A-Z, Z-A)
+  - Statusy aplikacji (PENDING, INTERVIEW, REJECTED, OFFER, ACCEPTED)
 
-## 🛠️ Tech Stack
+- **Statystyki i Analityka**:
+  - Analiza aplikacji według statusów
+  - Miesięczne podsumowania aplikacji
+  - Trendy w czasie rzeczywistym
 
-### Backend
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **ORM**: Prisma
-- **Autentykacja**: JWT
-- **Walidacja**: Zod
-- **Testy**: Vitest
+- **Bezpieczeństwo**:
+  - Walidacja danych przez Zod
+  - Hashowanie haseł (bcrypt)
+  - Ochrona przed XSS
+  - Helmet dla dodatkowych zabezpieczeń HTTP
+  - Rate limiting dla krytycznych endpointów
 
-### Frontend
-- **Framework**: React
-- **Bundler**: Vite
-- **Stylowanie**: Tailwind CSS
-- **Komponenty UI**: shadcn/ui
-- **Testy**: Vitest + React Testing Library
-- **Zarządzanie Stanem**: [planowany]
+### Frontend (aktualnie w developmencie 🚧)
+- React + TypeScript jako główne technologie
+- Vite zamiast Create React App - uczę się nowoczesnych narzędzi bundlowania
+- Tailwind CSS - pierwsze podejście do utility-first CSS
+- shadcn/ui - eksperymentuję z gotowymi komponentami UI
+- Planuję dodać testy z Vitest + Testing Library
+- W planach responsywny design
+
+**Note:** Frontend jest obecnie w fazie intensywnego rozwoju. Skupiam się na implementacji kolejnych funkcjonalności i nauce best practices w React.
+
+## 🛠️ Czego się uczę w tym projekcie?
+
+### Backend - moja pierwsza poważniejsza aplikacja serwerowa
+- **TypeScript + Node.js** - Podejście do bardziej zaawansowanych tematów związanych  z TS po stronie serwera
+- **Express.js** - podstawy REST API i middleware
+- **Prisma** - nowoczesne podejście do baz danych (po wcześniejszych przygodach z czystym SQL i Postgressem)
+- **MySQL** - solidna baza relacyjna
+- **JWT i bcrypt** - podstawy bezpiecznej autentykacji
+- **Zod** - walidacja z TypeScriptem (sporo lepsza niż Joi!)
+- **Testowanie z Vitest** - pierwszy raz piszę sensowne testy integracyjne
+- **Security basics** - helmet, xss-clean, rate-limiting
+
+### Frontend - work in progress! 
+- **React 18** - uczę się najnowszych features
+- **TypeScript** - Utrwalanie dobrych nawyków z TS
+- **Tailwind + shadcn/ui** - próba umocnienia swojej wiedzy praktycznej na temat tych bibliotek
+- **Testowanie** - planuję dodać testy komponentów przy użyciu Vitesta
 
 ## 🚀 Jak uruchomić
 
@@ -69,10 +88,10 @@ Job Application Tracker to fullstackowa aplikacja zbudowana w TypeScript, wykorz
 3. **Konfiguracja środowiska**
    Stwórz plik `.env` w katalogu server:
    ```env
-   DATABASE_URL="postgresql://user:password@localhost:5432/jobtracker"
+   DATABASE_URL="mysql://user:password@localhost:5432/jobtracker"
    JWT_SECRET="twoj-sekretny-klucz"
-   JWT_LIFETIME="1d"
-   PORT=3000
+   JWT_LIFETIME="30d"
+   PORT=8000
    ```
 
 4. **Inicjalizacja bazy danych**
@@ -91,117 +110,76 @@ Job Application Tracker to fullstackowa aplikacja zbudowana w TypeScript, wykorz
      npm start
      ```
 
-### Uruchomienie frontendu (client)
+### API Endpoints
 
-1. **Przejdź do katalogu client**
-   ```bash
-   cd client
-   ```
-
-2. **Instalacja zależności**
-   ```bash
-   npm install
-   ```
-
-3. **Uruchomienie aplikacji**
-   ```bash
-   npm run dev
-   ```
-
-### Uruchomienie testów
-
-#### Backend
-```bash
-cd server
-npm test
+#### Auth Routes
+```
+POST   /api/v1/auth/register  - Rejestracja użytkownika
+POST   /api/v1/auth/login     - Logowanie użytkownika
+PATCH  /api/v1/auth/update    - Aktualizacja danych użytkownika
 ```
 
-#### Frontend
-```bash
-cd client
-npm test
+#### Jobs Routes
+```
+GET    /api/v1/jobs          - Pobieranie wszystkich ofert (z filtrowaniem)
+POST   /api/v1/jobs          - Tworzenie nowej oferty
+GET    /api/v1/jobs/:id      - Pobieranie pojedynczej oferty
+PATCH  /api/v1/jobs/:id      - Aktualizacja oferty
+DELETE /api/v1/jobs/:id      - Usunięcie oferty
 ```
 
-## 📚 API Reference
-
-[Tu zostaje ta sama sekcja API Reference z poprzedniej wersji...]
-
-## 🔒 Zabezpieczenia
-
-[Tu zostaje ta sama sekcja Zabezpieczenia...]
+#### Stats Routes
+```
+GET    /api/v1/stats         - Pobieranie statystyk aplikacji
+```
 
 ## 🧪 Testy
 
-Projekt zawiera testy zarówno po stronie backendu jak i frontendu:
+Projekt zawiera kompleksowe testy integracyjne dla backendu:
 
-### Backend Tests
+### Przykładowe testy filtrowania ofert:
 ```typescript
-describe("Jobs API", () => {
-  describe("Tworzenie oferty pracy (POST /api/v1/jobs)", () => {
-    it("tworzy ofertę pracy z domyślnym statusem", async () => {
-      const response = await createTestJob(token, TEST_JOBS.valid.basic);
-      expect(response.status).toBe(201);
-    });
+describe("Filtering Jobs with correct data", () => {
+  it("should return all jobs", async () => {
+    const response = await request(app)
+      .get("/api/v1/jobs")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(StatusCodes.OK);
+  });
+
+  it("should return only jobs with specific status", async () => {
+    const response = await request(app)
+      .get("/api/v1/jobs?status=PENDING")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.body.jobs).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ status: "PENDING" })
+      ])
+    );
   });
 });
-```
-
-### Frontend Tests
-```typescript
-describe('LoginForm', () => {
-  it('renders login form', () => {
-    render(<LoginForm />)
-    
-    expect(screen.getByPlaceholderText('Email')).toBeInTheDocument()
-    expect(screen.getByPlaceholderText('Password')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument()
-  })
-})
 ```
 
 ## 📝 Struktura projektu
 
 ```
 project/
-├── client/                # Frontend React aplikacji
+├── server/                 
 │   ├── src/
-│   │   ├── components/    # Komponenty React
-│   │   ├── pages/        # Komponenty stron
-│   │   ├── hooks/        # Custom hooks
-│   │   ├── api/          # Funkcje API
-│   │   ├── types/        # Typy TypeScript
-│   │   └── utils/        # Narzędzia pomocnicze
+│   │   ├── controllers/    # Logika biznesowa
+│   │   ├── routes/         # Definicje endpointów
+│   │   ├── middleware/     # Middleware (auth, error handling)
+│   │   ├── errors/         # Własne klasy błędów
+│   │   ├── schema/         # Schematy walidacji (Zod)
+│   │   ├── types/         # TypeScript interfaces i types
+│   │   └── utils/         # Funkcje pomocnicze
+│   ├── tests/             # Testy integracyjne
 │   └── package.json
 │
-├── server/                # Backend Express aplikacji
-│   ├── src/
-│   │   ├── controllers/  # Kontrolery
-│   │   ├── routes/      # Trasy API
-│   │   ├── middleware/  # Middleware
-│   │   ├── errors/     # Obsługa błędów
-│   │   ├── schema/    # Schematy walidacji
-│   │   ├── types/    # Typy TypeScript
-│   │   └── utils/   # Narzędzia pomocnicze
-│   └── package.json
-│
-
+├── client/                # Frontend (w rozwoju)
+    └── [struktura w rozwoju]
 ```
 
-<!-- ### Rozwiązywanie problemów
-
-[Tu zostaje ta sama sekcja Rozwiązywanie problemów z dodaniem:]
-
-- Problemy z frontendem:
-  - Sprawdź czy proxy jest poprawnie skonfigurowane w vite.config.ts
-  - Upewnij się, że backend jest uruchomiony na porcie 3000
-  - W przypadku problemów z typami, wykonaj `npm run build` w obu projektach -->
-
-## 📄 Licencja
+## 📝 Licencja
 
 Ten projekt jest udostępniony na licencji MIT - szczegóły w pliku [LICENSE](LICENSE)
-
-## 🙋‍♂️ Autor
-
-Twoje Imię - [@twoj_twitter](https://twitter.com/twoj_twitter)
-
-Project Link: [https://github.com/twoje-repo/job-tracker](https://github.com/twoje-repo/job-tracker)

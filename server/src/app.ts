@@ -41,12 +41,12 @@ app.use(
 	) => void,
 );
 
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 const start = async (): Promise<void> => {
 	try {
-		app.listen(port, () =>
-			console.log(`Server is listening on port ${port}...`),
+		app.listen(PORT, () =>
+			console.log(`Server is listening on port ${PORT}...`),
 		);
 	} catch (error) {
 		console.log(error);
