@@ -30,7 +30,7 @@ const TEST_DATA = {
 		},
 		changedEmail: {
 			...TEST_USER,
-			email: "test@mail.com",
+			email: "vitestChanged@mail.com",
 		},
 	},
 	invalid: {
@@ -92,9 +92,12 @@ describe("Update User API", () => {
 	});
 
 	afterEach(async () => {
-		await prisma.user.delete({
+		// Próbujemy usunąć użytkownika po obu możliwych emailach
+		await prisma.user.deleteMany({
 			where: {
-				email: TEST_USER.email,
+				email: {
+					in: [TEST_USER.email, TEST_DATA.valid.changedEmail.email],
+				},
 			},
 		});
 	});
@@ -118,7 +121,7 @@ describe("Update User API", () => {
 				.patch("/api/v1/auth/update")
 				.set("Authorization", `Bearer ${token}`)
 				.send(TEST_DATA.valid.changedEmail);
-
+			console.log(response.body);
 			expectValidUserResponse(response, TEST_DATA.valid.changedEmail);
 		});
 	});
@@ -163,6 +166,18 @@ describe("Update User API", () => {
 					email: TEST_DATA.invalid.alreadyExistingEmail.email,
 				},
 			});
+		});
+		it("Should throw Bad Request Error if it is the test user", async () => {
+			const response = await request(app)
+				.patch("/api/v1/auth/update")
+				.set(
+					"Authorization",
+					"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIxMSwibmFtZSI6IlRlc3QiLCJpYXQiOjE3MzY2OTQzMDIsImV4cCI6MTczOTI4NjMwMn0.wZnd16cLxmSTxW7i2g62KaX8LAobAOO5dgd8KcD9Vc8",
+				)
+				.send(TEST_DATA.valid.changedName);
+
+			expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+			expect(response.body.msg).toBeDefined();
 		});
 	});
 });
