@@ -6,6 +6,7 @@ declare global {
 			user?: {
 				userId: number;
 				name: string;
+				testUser: boolean;
 			};
 		}
 	}

@@ -40,7 +40,7 @@ export const getAllJobs = async (req: Request, res: Response) => {
 		req.user.userId,
 	);
 	const orderBy = buildOrderClause(sort as string);
-
+	console.log("Where clause:", JSON.stringify(where, null, 2));
 	// Pobieranie jobów z sortowaniem
 	const [totalJobs, jobs] = await Promise.all([
 		prisma.jobs.count({ where }), // całkowita liczba rekordów

@@ -9,19 +9,18 @@ const authenticateUser = async (
 	next: NextFunction,
 ): Promise<void> => {
 	const authHeader = req.headers.authorization;
-
 	if (!authHeader?.startsWith("Bearer ")) {
 		throw new UnauthenticatedError("Authentication Invalid");
 	}
 
 	const token = authHeader.split(" ")[1];
-	console.log(token);
 	try {
 		const payload = jwt.verify(
 			token,
 			process.env.JWT_SECRET as string,
 		) as UserPayload;
-		req.user = { userId: payload.userId, name: payload.name };
+		const testUser = payload.name.toLowerCase() === "test";
+		req.user = { userId: payload.userId, name: payload.name, testUser };
 		next();
 	} catch (error) {
 		throw new UnauthenticatedError("Authentication Invalid");

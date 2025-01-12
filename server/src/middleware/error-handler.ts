@@ -41,7 +41,7 @@ export default function errorHandlerMiddleware(
 	if (err instanceof Prisma.PrismaClientValidationError) {
 		return res
 			.status(StatusCodes.BAD_REQUEST)
-			.json({ msg: "Database error validation occurred" });
+			.json({ msg: "Database error validation occurred", err });
 	}
 
 	if (err instanceof z.ZodError) {
