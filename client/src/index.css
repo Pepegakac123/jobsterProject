@@ -68,4 +68,10 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+	.shadow-animate-primary {
+		@apply shadow-md shadow-primary/20 transition-shadow duration-300 ease-in-out hover:shadow-xl hover:shadow-primary/30;
+	}
+	.base-transition {
+		@apply transition-all duration-300 ease-in-out;
+	}
 }

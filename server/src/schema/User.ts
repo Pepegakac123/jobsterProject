@@ -6,11 +6,8 @@ export const registeredUserSchema = z.object({
 		.trim()
 		.min(3, "Name must be at least 3 characters")
 		.max(50, "Name too long"),
-	lastName: z
-		.string()
-		.trim()
-		.min(3, "Last name must be at least 3 characters")
-		.max(50, "Last name too long"),
+
+	lastName: z.string().trim().optional(),
 
 	email: z
 		.string()
@@ -30,11 +27,7 @@ export const registeredUserSchema = z.object({
 			/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/,
 			"Password must contain uppercase, number and special character",
 		),
-	location: z
-		.string()
-		.trim()
-		.min(3, "Location must be at least 3 characters")
-		.max(50, "Location too long"),
+	location: z.string().trim().optional(),
 });
 
 export const UpdatedUserSchema = z.object({
