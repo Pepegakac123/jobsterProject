@@ -39,7 +39,7 @@ const LoginForm = ({ isMember }: { isMember: boolean }) => {
 				toast({
 					title: "Logged in successfully",
 				});
-				navigate("/");
+				navigate("/dashboard");
 			} else {
 				toast({
 					title: resultAction.payload as string,

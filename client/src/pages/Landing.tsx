@@ -1,8 +1,19 @@
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import type { RootState } from "@/store";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 const Landing = () => {
+	const navigate = useNavigate();
+	const { user } = useSelector((state: RootState) => state.user);
+
+	useEffect(() => {
+		if (user) {
+			navigate("/dashboard");
+		}
+	}, [user, navigate]);
 	return (
 		<main className="h-screen w-full max-w-7xl mx-auto p-4 flex flex-col ">
 			<nav className="w-full flex py-4">

@@ -1,6 +1,7 @@
 // src/store/features/user/userSlice.ts
 import { api } from "@/api";
 import type { UserInfo } from "@/types";
+import { addUserToLocalStorage, getUserFromLocalStorage } from "@/utils";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
@@ -25,7 +26,7 @@ interface UserState {
 
 const initialState: UserState = {
 	isLoading: false,
-	user: null,
+	user: getUserFromLocalStorage(),
 };
 
 export const loginUser = createAsyncThunk<UserInfo, LoginInput>(
@@ -37,6 +38,7 @@ export const loginUser = createAsyncThunk<UserInfo, LoginInput>(
 				"/api/v1/auth/login",
 				credentials,
 			);
+			localStorage.setItem("token", data.user.token);
 			return data.user;
 		} catch (error) {
 			// Typujemy error
@@ -60,6 +62,7 @@ export const registerUser = createAsyncThunk<UserInfo, registerInput>(
 				"/api/v1/auth/register",
 				credentials,
 			);
+			localStorage.setItem("token", data.user.token);
 			return data.user;
 		} catch (error) {
 			// Typujemy error
@@ -86,9 +89,10 @@ const userSlice = createSlice({
 			.addCase(loginUser.rejected, (state) => {
 				state.isLoading = false;
 			})
-			.addCase(loginUser.fulfilled, (state, action) => {
+			.addCase(loginUser.fulfilled, (state, { payload: user }) => {
 				state.isLoading = false;
-				state.user = action.payload;
+				state.user = user;
+				addUserToLocalStorage(user);
 			})
 			.addCase(registerUser.pending, (state) => {
 				state.isLoading = true;
@@ -96,9 +100,10 @@ const userSlice = createSlice({
 			.addCase(registerUser.rejected, (state) => {
 				state.isLoading = false;
 			})
-			.addCase(registerUser.fulfilled, (state, action) => {
+			.addCase(registerUser.fulfilled, (state, { payload: user }) => {
 				state.isLoading = false;
-				state.user = action.payload;
+				state.user = user;
+				addUserToLocalStorage(user);
 			});
 	},
 });

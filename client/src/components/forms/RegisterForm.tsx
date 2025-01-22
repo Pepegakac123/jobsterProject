@@ -40,7 +40,7 @@ const RegisterForm = ({ isMember }: { isMember: boolean }) => {
 				toast({
 					title: "Registered in successfully",
 				});
-				navigate("/");
+				navigate("/dashboard");
 			} else {
 				toast({
 					title: resultAction.payload as string,

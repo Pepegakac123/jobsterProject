@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Card,
 	CardContent,
@@ -8,16 +8,14 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import Logo from "@/components/Logo";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LoginForm, RegisterForm } from "@/components/forms";
 import TestUserBtn from "@/components/TestUserBtn";
-import { useSelector, useDispatch } from "react-redux";
-import { loginUser, registerUser } from "@/store/features/user/userSlice";
+import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 const Register = () => {
 	const [isMember, setIsMember] = useState<boolean>(true);
-	const dispatch = useDispatch();
-	const { isLoading, user } = useSelector((state: RootState) => state.user);
+	const { isLoading } = useSelector((state: RootState) => state.user);
 
 	return (
 		<main className="grid w-full h-screen place-items-center bg-muted/50">
