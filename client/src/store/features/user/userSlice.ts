@@ -1,7 +1,11 @@
 // src/store/features/user/userSlice.ts
 import { api } from "@/api";
 import type { UserInfo } from "@/types";
-import { addUserToLocalStorage, getUserFromLocalStorage } from "@/utils";
+import {
+	addUserToLocalStorage,
+	getUserFromLocalStorage,
+	removeUserFromLocalStorage,
+} from "@/utils";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
@@ -80,7 +84,14 @@ export const registerUser = createAsyncThunk<UserInfo, registerInput>(
 const userSlice = createSlice({
 	name: "user",
 	initialState,
-	reducers: {},
+	reducers: {
+		logout: (state) => {
+			state.user = null;
+			state.isLoading = false;
+			removeUserFromLocalStorage();
+			localStorage.removeItem("token");
+		},
+	},
 	extraReducers: (builder) => {
 		builder
 			.addCase(loginUser.pending, (state) => {
@@ -109,3 +120,4 @@ const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
+export const { logout } = userSlice.actions;

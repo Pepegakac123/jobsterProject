@@ -1,10 +1,11 @@
 import { Dashboard, NotFoundPage, Landing, Register } from "@/pages";
 import { createBrowserRouter } from "react-router-dom";
 import { loader as DashboardLoader } from "@/pages/Dashboard";
+import DashboardLayout from "@/components/DashboardLayout";
 export const routes = [
 	{
 		path: "/dashboard",
-		element: <Dashboard />,
+		element: <DashboardLayout />,
 		loader: DashboardLoader,
 	},
 	{

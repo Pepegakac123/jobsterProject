@@ -13,3 +13,33 @@ export const getUserFromLocalStorage = () => {
 	const user = result ? JSON.parse(result) : null;
 	return user;
 };
+
+import {
+	RiAddCircleLine,
+	RiBriefcaseLine,
+	RiBarChartLine,
+	RiUserLine,
+} from "react-icons/ri";
+
+export const mobileNavLinks = [
+	{
+		text: "Add Job",
+		path: "/dashboard",
+		icon: RiAddCircleLine,
+	},
+	{
+		text: "All Jobs",
+		path: "/dashboard/all",
+		icon: RiBriefcaseLine,
+	},
+	{
+		text: "Stats",
+		path: "/dashboard/stats",
+		icon: RiBarChartLine,
+	},
+	{
+		text: "Profile",
+		path: "/dashboard/profile",
+		icon: RiUserLine,
+	},
+];
