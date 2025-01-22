@@ -12,8 +12,17 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useDispatch, useSelector } from "react-redux";
+import { useToast } from "@/hooks/use-toast";
+import type { AppDispatch, RootState } from "@/store";
+import { registerUser } from "@/store/features/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
-const RegisterForm = () => {
+const RegisterForm = ({ isMember }: { isMember: boolean }) => {
+	const { toast } = useToast();
+	const dispatch = useDispatch<AppDispatch>();
+	const { isLoading, user } = useSelector((state: RootState) => state.user);
+	const navigate = useNavigate();
 	const form = useForm<z.infer<typeof registerFormSchema>>({
 		resolver: zodResolver(registerFormSchema),
 		defaultValues: {
@@ -24,9 +33,20 @@ const RegisterForm = () => {
 			location: "",
 		},
 	});
-	function onSubmit(values: z.infer<typeof registerFormSchema>) {
+	async function onSubmit(values: z.infer<typeof registerFormSchema>) {
 		try {
-			console.log(values);
+			const resultAction = await dispatch(registerUser(values));
+			if (registerUser.fulfilled.match(resultAction)) {
+				toast({
+					title: "Registered in successfully",
+				});
+				navigate("/");
+			} else {
+				toast({
+					title: resultAction.payload as string,
+					variant: "destructive",
+				});
+			}
 		} catch (error) {
 			console.log(error);
 		}
@@ -117,7 +137,7 @@ const RegisterForm = () => {
 					)}
 				/>
 
-				<Button type="submit" className="w-full">
+				<Button type="submit" className="w-full" disabled={isLoading}>
 					Submit
 				</Button>
 			</form>

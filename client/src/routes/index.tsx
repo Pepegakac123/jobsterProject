@@ -3,13 +3,13 @@ import { createBrowserRouter } from "react-router-dom";
 
 export const routes = [
 	{
-		path: "/",
+		path: "/dashboard",
 		element: <Dashboard />,
-		index: true,
 	},
 	{
-		path: "landing",
+		path: "/",
 		element: <Landing />,
+		index: true,
 	},
 	{
 		path: "register",

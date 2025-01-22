@@ -11,8 +11,8 @@ import statsRouter from "./routes/stats.js";
 
 // extra security
 import helmet from "helmet";
-
 import xss from "xss-clean";
+import cors from "cors";
 
 export const app: Express = express();
 app.set("trust proxy", 1);
@@ -22,6 +22,12 @@ app.use(express.json());
 app.use(helmet());
 app.use(xss());
 
+app.use(
+	cors({
+		origin: "http://localhost:5173", // adres twojego frontendu
+		credentials: true,
+	}),
+);
 // // serve index.html
 // app.get('*', (req, res) => {
 // 	res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));

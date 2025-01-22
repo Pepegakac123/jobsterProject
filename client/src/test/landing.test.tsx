@@ -66,7 +66,7 @@ describe("Landing Page", () => {
 			user = userEvent.setup();
 
 			const router = createMemoryRouter(routes, {
-				initialEntries: ["/landing"],
+				initialEntries: ["/"],
 				initialIndex: 0,
 			});
 

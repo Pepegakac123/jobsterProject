@@ -13,8 +13,18 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store";
+import { useToast } from "@/hooks/use-toast";
+import { loginUser } from "@/store/features/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
-const LoginForm = () => {
+const LoginForm = ({ isMember }: { isMember: boolean }) => {
+	const { toast } = useToast();
+	const navigate = useNavigate();
+	const dispatch = useDispatch<AppDispatch>();
+	const { isLoading, user } = useSelector((state: RootState) => state.user);
+
 	const form = useForm<z.infer<typeof loginFormSchema>>({
 		resolver: zodResolver(loginFormSchema),
 		defaultValues: {
@@ -22,9 +32,20 @@ const LoginForm = () => {
 			password: "",
 		},
 	});
-	function onSubmit(values: z.infer<typeof loginFormSchema>) {
+	async function onSubmit(values: z.infer<typeof loginFormSchema>) {
 		try {
-			console.log(values);
+			const resultAction = await dispatch(loginUser(values));
+			if (loginUser.fulfilled.match(resultAction)) {
+				toast({
+					title: "Logged in successfully",
+				});
+				navigate("/");
+			} else {
+				toast({
+					title: resultAction.payload as string,
+					variant: "destructive",
+				});
+			}
 		} catch (error) {
 			console.log(error);
 		}
@@ -45,6 +66,7 @@ const LoginForm = () => {
 							<FormControl>
 								<Input placeholder="test@mail.com" {...field} />
 							</FormControl>
+							<FormMessage />
 						</FormItem>
 					)}
 				/>
@@ -57,10 +79,11 @@ const LoginForm = () => {
 							<FormControl>
 								<Input placeholder="secretPass!@" {...field} />
 							</FormControl>
+							<FormMessage />
 						</FormItem>
 					)}
 				/>
-				<Button type="submit" className="w-full">
+				<Button type="submit" className="w-full" disabled={isLoading}>
 					Submit
 				</Button>
 			</form>
