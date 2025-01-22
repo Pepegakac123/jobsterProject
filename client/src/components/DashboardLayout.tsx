@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import type { AppDispatch } from "@/store";
 import { logout } from "@/store/features/user/userSlice";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { NavLink, Outlet, redirect } from "react-router-dom";
+import { NavLink, Outlet, redirect, useNavigate } from "react-router-dom";
 import { mobileNavLinks } from "@/utils";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -19,6 +19,13 @@ const DashboardLayout = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const isLaptop = useMediaQuery({ minWidth: 1024 });
 	const [toggleSidebar, setToggleSidebar] = useState(true);
+
+	const navigate = useNavigate();
+
+	const handleLogout = () => {
+		dispatch(logout());
+		navigate("/register");
+	};
 
 	return (
 		// <main
@@ -106,7 +113,7 @@ const DashboardLayout = () => {
 
 						<Button
 							className="bg-primary uppercase p-2 font-bold h-8 text-xs"
-							onClick={() => dispatch(logout())}
+							onClick={handleLogout}
 						>
 							Logout
 						</Button>

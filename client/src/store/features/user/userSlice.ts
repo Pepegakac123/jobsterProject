@@ -8,6 +8,7 @@ import {
 } from "@/utils";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
+import { redirect } from "react-router-dom";
 
 // Definicja interfejsów
 interface LoginInput {
@@ -81,6 +82,27 @@ export const registerUser = createAsyncThunk<UserInfo, registerInput>(
 	},
 );
 
+export const loginDemoUser = createAsyncThunk(
+	"user/loginDemoUser",
+	async (_, thunkAPI) => {
+		try {
+			const { data } = await api.post("/api/v1/auth/login", {
+				email: "test@mail.com",
+				password: "kTx12KL#!",
+			});
+			localStorage.setItem("token", data.user.token);
+			return data.user;
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				return thunkAPI.rejectWithValue(
+					error.response?.data?.msg || "Something went wrong",
+				);
+			}
+			return thunkAPI.rejectWithValue("An error occurred");
+		}
+	},
+);
+
 const userSlice = createSlice({
 	name: "user",
 	initialState,
@@ -115,6 +137,14 @@ const userSlice = createSlice({
 				state.isLoading = false;
 				state.user = user;
 				addUserToLocalStorage(user);
+			})
+			.addCase(loginDemoUser.fulfilled, (state, { payload: user }) => {
+				state.isLoading = false;
+				state.user = user;
+				addUserToLocalStorage(user);
+			})
+			.addCase(loginDemoUser.rejected, (state) => {
+				state.isLoading = false;
 			});
 	},
 });
