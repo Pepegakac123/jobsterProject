@@ -1,7 +1,7 @@
 import { Dashboard, NotFoundPage, Landing, Register } from "@/pages";
 import { createBrowserRouter } from "react-router-dom";
 
-export const router = createBrowserRouter([
+export const routes = [
 	{
 		path: "/",
 		element: <Dashboard />,
@@ -19,4 +19,6 @@ export const router = createBrowserRouter([
 		path: "*",
 		element: <NotFoundPage />,
 	},
-]);
+];
+
+export const router = createBrowserRouter(routes);
