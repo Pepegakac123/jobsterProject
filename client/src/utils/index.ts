@@ -29,7 +29,7 @@ export const mobileNavLinks = [
 	},
 	{
 		text: "All Jobs",
-		path: "/dashboard/all",
+		path: "/dashboard/jobs",
 		icon: RiBriefcaseLine,
 	},
 	{

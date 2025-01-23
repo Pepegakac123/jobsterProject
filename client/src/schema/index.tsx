@@ -50,3 +50,33 @@ export const loginFormSchema = z.object({
 			"Password must contain uppercase, number and special character",
 		),
 });
+
+export const createJobFormSchema = z.object({
+	position: z
+		.string()
+		.trim()
+		.min(3, "Position must be at least 3 characters")
+		.max(50, "Position too long"),
+	company: z
+		.string()
+		.trim()
+		.min(3, "Company must be at least 3 characters")
+		.max(50, "Company too long"),
+	jobLocation: z.string().trim().default("my city"),
+	jobStatus: z.enum(["PENDING", "REJECTED", "INTERVIEW", "OFFER", "ACCEPTED"]),
+	jobType: z.enum(["FULL_TIME", "PART_TIME", "INTERNSHIP", "REMOTE"]),
+});
+
+export const QueryJobsFormSchema = z.object({
+	search: z.string().trim().optional(),
+	jobStatus: z.enum([
+		"PENDING",
+		"REJECTED",
+		"INTERVIEW",
+		"OFFER",
+		"ACCEPTED",
+		"all",
+	]),
+	jobType: z.enum(["FULL_TIME", "PART_TIME", "INTERNSHIP", "REMOTE", "all"]),
+	sort: z.enum(["latest", "oldest", "a-z", "z-a"]),
+});

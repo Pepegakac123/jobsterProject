@@ -49,6 +49,7 @@ const DashboardLayout = () => {
 								<NavLink
 									key={path}
 									to={path}
+									end
 									className={({ isActive }) =>
 										`group flex flex-row items-center justify-center text-xl font-thin capitalize text-zinc-400 base-transition hover:text-primary
          w-full p-2 ${isActive ? "!text-primary [&_*]:text-primary" : ""}`
@@ -90,6 +91,7 @@ const DashboardLayout = () => {
 											<NavLink
 												key={path}
 												to={path}
+												end
 												className={({ isActive }) =>
 													`group flex flex-row items-center justify-center text-xl font-thin capitalize text-zinc-400 base-transition hover:text-primary
          w-full p-2 ${isActive ? "!text-primary [&_*]:text-primary" : ""}`
@@ -119,7 +121,7 @@ const DashboardLayout = () => {
 						</Button>
 					</div>
 				</nav>
-				<section className="bg-background w-full h-full">
+				<section className="bg-background w-full">
 					<Outlet />
 				</section>
 			</section>

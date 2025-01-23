@@ -1,4 +1,12 @@
-import { AddJobs, NotFoundPage, Landing, Register } from "@/pages";
+import {
+	AddJobs,
+	NotFoundPage,
+	Landing,
+	Register,
+	AllJobs,
+	Stats,
+	Profile,
+} from "@/pages";
 import { createBrowserRouter } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
 import { loader as DashboardLoader } from "@/components/DashboardLayout";
@@ -11,6 +19,18 @@ export const routes = [
 			{
 				index: true,
 				element: <AddJobs />,
+			},
+			{
+				path: "jobs",
+				element: <AllJobs />,
+			},
+			{
+				path: "stats",
+				element: <Stats />,
+			},
+			{
+				path: "profile",
+				element: <Profile />,
 			},
 		],
 	},
