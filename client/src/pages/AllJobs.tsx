@@ -11,6 +11,8 @@ import { IoCalendar } from "react-icons/io5";
 import { GrStatusCriticalSmall } from "react-icons/gr";
 import { Button } from "@/components/ui/button";
 
+import PaginationControls from "@/components/PaginationControls";
+
 const AllJobs = () => {
 	const [searchParams, setSearchParams] = useState<SearchQueryOptions>({
 		search: "",
@@ -23,6 +25,7 @@ const AllJobs = () => {
 
 	const { data: jobs, isLoading } = useGetJobsQuery(searchParams);
 	if (isLoading) return <Loading />;
+	console.log(jobs);
 	return (
 		<>
 			<Card className="w-[90%] mx-auto mt-8 max-w-4xl shadow-animate-primary">
@@ -96,7 +99,15 @@ const AllJobs = () => {
 					);
 				})}
 			</section>
+			{/* <Pagination /> */}
+			<PaginationControls
+				currentPage={Number(searchParams.page)}
+				totalPages={Number(jobs?.numOfPages)}
+				searchParams={searchParams}
+				setSearchParams={setSearchParams}
+			/>
 		</>
 	);
 };
+
 export default AllJobs;

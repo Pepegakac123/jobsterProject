@@ -105,8 +105,6 @@ export const loginDemoUser = createAsyncThunk(
 	},
 );
 
-const dispatch = useDispatch<AppDispatch>();
-
 const userSlice = createSlice({
 	name: "user",
 	initialState,
@@ -116,7 +114,6 @@ const userSlice = createSlice({
 			state.isLoading = false;
 			removeUserFromLocalStorage();
 			localStorage.removeItem("token");
-			dispatch(jobsApiSlice.util.resetApiState());
 		},
 	},
 	extraReducers: (builder) => {

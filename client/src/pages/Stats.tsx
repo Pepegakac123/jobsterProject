@@ -17,6 +17,7 @@ import {
 	ChartLegendContent,
 } from "@/components/ui/chart";
 import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Link } from "react-router-dom";
 
 interface IconConfig {
 	[key: string]: IconType;
@@ -44,6 +45,21 @@ const Stats = () => {
 			</div>
 		);
 	if (error) return <div>We are experiencing some problems</div>;
+
+	if (stats?.jobsByStatus.length === 0)
+		return (
+			<>
+				<div className="text-center mt-12 capitalize text-3xl">
+					No jobs found
+				</div>
+				<p className="text-center mt-4">
+					Try to create a new job entry{" "}
+					<Link to="/dashboard" className="underline text-primary">
+						here
+					</Link>
+				</p>
+			</>
+		);
 
 	const transformedData = stats?.monthlyApplications.map((item) => ({
 		month: new Date(item.month).toLocaleString("en-US", { month: "short" }),

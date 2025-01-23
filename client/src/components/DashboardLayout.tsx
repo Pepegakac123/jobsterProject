@@ -4,7 +4,12 @@ import { Button } from "./ui/button";
 import { useDispatch } from "react-redux";
 import { store, type AppDispatch } from "@/store";
 import { logout } from "@/store/features/user/userSlice";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { NavLink, Outlet, redirect, useNavigate } from "react-router-dom";
 import { mobileNavLinks } from "@/utils";
 import { useState } from "react";
@@ -30,11 +35,12 @@ const DashboardLayout = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const isLaptop = useMediaQuery({ minWidth: 1024 });
 	const [toggleSidebar, setToggleSidebar] = useState(true);
-
+	const [open, setOpen] = useState(false);
 	const navigate = useNavigate();
 
 	const handleLogout = () => {
 		dispatch(logout());
+		dispatch(jobsApiSlice.util.resetApiState());
 		navigate("/register");
 	};
 
@@ -88,13 +94,15 @@ const DashboardLayout = () => {
 								<RiMenu4Line className="!w-8 !h-8 text-primary" />
 							</Button>
 						) : (
-							<Dialog>
+							<Dialog open={open} onOpenChange={setOpen}>
 								<DialogTrigger
 									className="base-tra
                          hover:bg-muted p-2 rounded-md"
+									onClick={() => setOpen(true)}
 								>
 									<RiMenu4Line className="!w-8 !h-8 text-primary" />
 								</DialogTrigger>
+								<DialogTitle className="hidden">Menu</DialogTitle>
 								<DialogContent className="w-[90%] h-[90%] flex flex-col gap-8 items-center py-16 ">
 									<Logo className="w-48" />
 									<nav className="flex flex-col gap-3 w-full">
@@ -103,6 +111,7 @@ const DashboardLayout = () => {
 												key={path}
 												to={path}
 												end
+												onClick={() => setOpen(false)}
 												className={({ isActive }) =>
 													`group flex flex-row items-center justify-center text-xl font-thin capitalize text-zinc-400 base-transition hover:text-primary
          w-full p-2 ${isActive ? "!text-primary [&_*]:text-primary" : ""}`
