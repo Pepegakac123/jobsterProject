@@ -27,7 +27,6 @@ const QueryJobsForm = ({
 	onSearch,
 }: { onSearch: React.Dispatch<React.SetStateAction<SearchQueryOptions>> }) => {
 	const { toast } = useToast();
-	const navigate = useNavigate();
 
 	const form = useForm<z.infer<typeof QueryJobsFormSchema>>({
 		resolver: zodResolver(QueryJobsFormSchema),
@@ -54,6 +53,24 @@ const QueryJobsForm = ({
 			});
 		}
 	}
+	const resetForm = () => {
+		form.reset({
+			search: "",
+			jobStatus: "all",
+			jobType: "all",
+			sort: "latest",
+		});
+
+		// Zresetuj też wyszukiwanie
+		onSearch({
+			search: "",
+			status: "all",
+			jobType: "all",
+			sort: "latest",
+			page: "1",
+			limit: "10",
+		});
+	};
 	return (
 		<Form {...form}>
 			<form
@@ -160,7 +177,11 @@ const QueryJobsForm = ({
 					<Button type="submit" className="w-full self-end">
 						Apply Filters
 					</Button>
-					<Button type="button" className="w-full self-end">
+					<Button
+						type="button"
+						onChange={resetForm}
+						className="w-full self-end"
+					>
 						Reset Search Values
 					</Button>
 				</div>

@@ -1,10 +1,8 @@
 import QueryJobsForm from "@/components/forms/QueryJobsForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CreateJobForm from "@/components/forms/CreateJobForm";
 import type { SearchQueryOptions } from "@/types";
 import { useState } from "react";
 import { useGetJobsQuery } from "@/store/features/jobs/jobsApiSlice";
-import { L } from "vitest/dist/chunks/reporters.D7Jzd9GS.js";
 import Loading from "@/components/Loading";
 import { dateFormatter, toTitleCase } from "@/utils";
 import { MdLocationCity } from "react-icons/md";
@@ -24,7 +22,6 @@ const AllJobs = () => {
 	});
 
 	const { data: jobs, isLoading } = useGetJobsQuery(searchParams);
-	console.log(jobs);
 	if (isLoading) return <Loading />;
 	return (
 		<>
