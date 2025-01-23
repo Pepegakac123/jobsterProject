@@ -177,11 +177,7 @@ const QueryJobsForm = ({
 					<Button type="submit" className="w-full self-end">
 						Apply Filters
 					</Button>
-					<Button
-						type="button"
-						onChange={resetForm}
-						className="w-full self-end"
-					>
+					<Button type="button" onClick={resetForm} className="w-full self-end">
 						Reset Search Values
 					</Button>
 				</div>
