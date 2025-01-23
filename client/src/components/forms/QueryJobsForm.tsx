@@ -21,8 +21,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import type { SearchQueryOptions } from "@/types";
 
-const QueryJobsForm = () => {
+const QueryJobsForm = ({
+	onSearch,
+}: { onSearch: React.Dispatch<React.SetStateAction<SearchQueryOptions>> }) => {
 	const { toast } = useToast();
 	const navigate = useNavigate();
 
@@ -36,7 +39,21 @@ const QueryJobsForm = () => {
 		},
 	});
 
-	async function onSubmit(values: z.infer<typeof QueryJobsFormSchema>) {}
+	async function onSubmit(values: z.infer<typeof QueryJobsFormSchema>) {
+		try {
+			const searchQuery = {
+				...values,
+				page: "1",
+				limit: "10",
+			} as SearchQueryOptions;
+			onSearch(searchQuery);
+		} catch (error) {
+			toast({
+				title: "Something went wrong",
+				variant: "destructive",
+			});
+		}
+	}
 	return (
 		<Form {...form}>
 			<form

@@ -43,3 +43,19 @@ export const mobileNavLinks = [
 		icon: RiUserLine,
 	},
 ];
+
+export const toTitleCase = (str: string) => {
+	return str.toLowerCase().charAt(0).toUpperCase() + str.toLowerCase().slice(1);
+};
+
+export const dateFormatter = (string: string) => {
+	const date = new Date(string);
+	const formattedDate = date
+		.toLocaleDateString("en-US", {
+			month: "short",
+			day: "numeric",
+			year: "numeric",
+		})
+		.replace(/(\d+)/, "$1th");
+	return formattedDate;
+};

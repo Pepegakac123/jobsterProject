@@ -48,7 +48,7 @@ const DashboardLayout = () => {
 			<aside
 				className={`${
 					toggleSidebar ? "w-64" : "w-0"
-				} hidden lg:flex flex-col items-center h-screen bg-card overflow-hidden base-transition`}
+				} hidden lg:flex flex-col items-center h-screen sticky top-0 bg-card overflow-hidden base-transition`}
 			>
 				<div className="sticky top-0 flex flex-col items-center w-full h-full ">
 					<div className="max-h-20 h-full w-full flex items-center justify-center">

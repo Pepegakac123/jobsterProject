@@ -13,9 +13,21 @@ export const jobsApiSlice = createApi({
 			return headers;
 		},
 	}),
+	tagTypes: ["Jobs"],
 	endpoints: (builder) => ({
 		getJobs: builder.query<JobsPayload, SearchQueryOptions>({
-			query: ({ search, status, sort, jobType, page, limit }) => "/jobs",
+			query: (params) => ({
+				url: "/jobs",
+				params: {
+					search: params.search,
+					status: params.status,
+					jobType: params.jobType,
+					sort: params.sort,
+					page: params.page,
+					limit: params.limit,
+				},
+			}),
+			providesTags: ["Jobs"],
 		}),
 		getStats: builder.query<StatsPayload, void>({
 			query: () => "/stats",
