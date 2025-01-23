@@ -15,6 +15,7 @@ import { mobileNavLinks } from "@/utils";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { jobsApiSlice } from "@/store/features/jobs/jobsApiSlice";
+import { useToast } from "@/hooks/use-toast";
 export const loader = async () => {
 	const token = localStorage.getItem("token");
 
@@ -37,11 +38,15 @@ const DashboardLayout = () => {
 	const [toggleSidebar, setToggleSidebar] = useState(true);
 	const [open, setOpen] = useState(false);
 	const navigate = useNavigate();
+	const { toast } = useToast();
 
 	const handleLogout = () => {
 		dispatch(logout());
 		dispatch(jobsApiSlice.util.resetApiState());
 		navigate("/register");
+		toast({
+			title: "Logged out successfully",
+		});
 	};
 
 	return (
