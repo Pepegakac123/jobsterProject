@@ -101,7 +101,7 @@ export const getNumberOfApplicationsByMonths = async (userId: number) => {
 	// Konwersja na tablicę i sortowanie
 	const results = Object.entries(monthlyStats)
 		.map(([month, count]) => ({ month, count }))
-		.sort((a, b) => b.month.localeCompare(a.month));
+		.sort((a, b) => a.month.localeCompare(b.month));
 
 	return results;
 };

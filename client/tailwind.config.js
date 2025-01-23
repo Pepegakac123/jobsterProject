@@ -56,7 +56,7 @@ export default {
 				},
 				pending: "hsl(var(--pending))",
 				interview: "hsl(var(--interview))",
-				declined: "hsl(var(--declined))",
+				rejected: "hsl(var(--rejected))",
 			},
 		},
 	},

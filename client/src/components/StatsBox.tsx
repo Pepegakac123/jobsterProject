@@ -1,18 +1,20 @@
 import { cn } from "@/lib/utils";
+import type { IconType } from "react-icons/lib";
+
 interface StatsBoxProps {
 	number: string;
 	title: string;
-	color: "pending" | "declined" | "interview";
-	icon: React.ReactNode;
+	color: "pending" | "rejected" | "interview";
+	icon: IconType;
 }
 const colorConfig = {
 	pending: {
 		text: "text-pending",
 		background: "bg-pending/20",
 	},
-	declined: {
-		text: "text-declined",
-		background: "bg-declined/20",
+	rejected: {
+		text: "text-rejected",
+		background: "bg-rejected/20",
 	},
 	interview: {
 		text: "text-interview",
@@ -36,7 +38,7 @@ const StatsBox = ({ number, title, color, icon: Icon }: StatsBoxProps) => {
 						colorConfig[color].text,
 					)}
 				>
-					{Icon}
+					{<Icon />}
 				</span>
 			</div>
 			<p className="text-lg text-zinc-400 w-full">{title}</p>

@@ -61,3 +61,8 @@ export interface JobsPayload {
 	limit: number;
 	page: number;
 }
+
+export interface StatsPayload {
+	jobsByStatus: { status: Status; count: number }[];
+	monthlyApplications: { month: string; count: number }[];
+}

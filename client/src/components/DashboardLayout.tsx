@@ -2,17 +2,28 @@ import Logo from "./Logo";
 import { RiMenu4Line } from "react-icons/ri";
 import { Button } from "./ui/button";
 import { useDispatch } from "react-redux";
-import type { AppDispatch } from "@/store";
+import { store, type AppDispatch } from "@/store";
 import { logout } from "@/store/features/user/userSlice";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { NavLink, Outlet, redirect, useNavigate } from "react-router-dom";
 import { mobileNavLinks } from "@/utils";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { jobsApiSlice } from "@/store/features/jobs/jobsApiSlice";
 export const loader = async () => {
 	const token = localStorage.getItem("token");
 
 	if (!token) return redirect("/register");
+
+	// try {
+	// 	await store.dispatch(jobsApiSlice.endpoints.getStats.initiate({}));
+
+	// 	const result = jobsApiSlice.endpoints.getStats.select({})(store.getState());
+
+	// 	return result.data;
+	// } catch (error) {
+	// 	throw new Error(`Failed to fetch stats: ${error}`);
+	// }
 };
 
 const DashboardLayout = () => {
