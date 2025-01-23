@@ -8,7 +8,9 @@ import {
 } from "@/utils";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
-import { redirect } from "react-router-dom";
+import { jobsApiSlice } from "../jobs/jobsApiSlice";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/store";
 
 // Definicja interfejsów
 interface LoginInput {
@@ -103,6 +105,8 @@ export const loginDemoUser = createAsyncThunk(
 	},
 );
 
+const dispatch = useDispatch<AppDispatch>();
+
 const userSlice = createSlice({
 	name: "user",
 	initialState,
@@ -112,6 +116,7 @@ const userSlice = createSlice({
 			state.isLoading = false;
 			removeUserFromLocalStorage();
 			localStorage.removeItem("token");
+			dispatch(jobsApiSlice.util.resetApiState());
 		},
 	},
 	extraReducers: (builder) => {
