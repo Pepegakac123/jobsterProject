@@ -7,7 +7,7 @@ interface StatsBoxProps {
 	color: "pending" | "rejected" | "interview";
 	icon: IconType;
 }
-const colorConfig = {
+export const colorConfig = {
 	pending: {
 		text: "text-pending",
 		background: "bg-pending/20",

@@ -24,7 +24,15 @@ export interface CreateJobInput {
 	position: string;
 	status: Status;
 	jobType: JobType;
-	location?: string;
+	jobLocation?: string;
+}
+export interface UpdateJobInput {
+	id: number;
+	company: string;
+	position: string;
+	status: Status;
+	jobType: "FULL_TIME" | "PART_TIME" | "INTERNSHIP" | "REMOTE";
+	jobLocation?: string;
 }
 
 export type QueryOptions = {

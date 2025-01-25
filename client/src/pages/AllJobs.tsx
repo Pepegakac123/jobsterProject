@@ -1,6 +1,6 @@
 import QueryJobsForm from "@/components/forms/QueryJobsForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { SearchQueryOptions } from "@/types";
+import type { SearchQueryOptions, UpdateJobInput } from "@/types";
 import { useState } from "react";
 import { useGetJobsQuery } from "@/store/features/jobs/jobsApiSlice";
 import Loading from "@/components/Loading";
@@ -12,6 +12,9 @@ import { GrStatusCriticalSmall } from "react-icons/gr";
 import { Button } from "@/components/ui/button";
 
 import PaginationControls from "@/components/PaginationControls";
+import DeleteJobDialog from "@/components/DeleteJobDialog";
+import UpdateJobDialog from "@/components/UpdateJobDialog";
+import { colorConfig } from "@/components/StatsBox";
 
 const AllJobs = () => {
 	const [searchParams, setSearchParams] = useState<SearchQueryOptions>({
@@ -73,7 +76,9 @@ const AllJobs = () => {
 											</p>
 										</div>
 										<div className="flex flex-row gap-2 items-center justify-center">
-											<GrStatusCriticalSmall className="text-primary text-xl" />
+											<GrStatusCriticalSmall
+												className={`text-xl ${colorConfig[job.status.toLowerCase() as keyof typeof colorConfig].text} `}
+											/>
 											<p className="text-md capitalize">
 												{toTitleCase(job.status).replace("_", " ")}
 											</p>
@@ -81,18 +86,8 @@ const AllJobs = () => {
 									</div>
 								</div>
 								<div className="flex flex-row gap-4 items-center justify-start w-full">
-									<Button
-										type="button"
-										className="w-fit text-sm font-bold shadow-md shadow-primary/40"
-									>
-										Edit
-									</Button>
-									<Button
-										type="button"
-										className="w-fit text-sm font-bold bg-destructive text-destructive-foreground hover:bg-destructive/80 shadow-md shadow-destructive/40"
-									>
-										Delete
-									</Button>
+									<UpdateJobDialog job={job as UpdateJobInput} />
+									<DeleteJobDialog id={job.id} />
 								</div>
 							</CardContent>
 						</Card>

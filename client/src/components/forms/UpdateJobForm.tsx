@@ -1,7 +1,7 @@
 import { createJobFormSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import type { z } from "zod";
+import { set, type z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
 import {
 	Select,
 	SelectContent,
@@ -23,40 +22,77 @@ import {
 } from "@/components/ui/select";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
-import { useCreateJobMutation } from "@/store/features/jobs/jobsApiSlice";
+import { useUpdateJobMutation } from "@/store/features/jobs/jobsApiSlice";
 import Loading from "../Loading";
-import type { CreateJobInput } from "@/types";
+import type { UpdateJobInput } from "@/types";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { useEffect, useState } from "react";
 
-const CreateJobForm = () => {
+const UpdateJobForm = ({
+	job,
+	setOpen,
+}: {
+	job: UpdateJobInput;
+	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
 	const { toast } = useToast();
-	const navigate = useNavigate();
 	const { user } = useSelector((state: RootState) => state.user);
+	const [originalValues, setOriginalValues] =
+		useState<Partial<UpdateJobInput>>(job);
 
-	const [createJob, { isLoading }] = useCreateJobMutation();
+	useEffect(() => {
+		setOriginalValues({
+			position: job.position,
+			company: job.company,
+			jobLocation: job.jobLocation,
+			status: job.status,
+			jobType: job.jobType,
+		});
+	}, [job]);
+
+	const [updateJob, { isLoading }] = useUpdateJobMutation();
 
 	const form = useForm<z.infer<typeof createJobFormSchema>>({
 		resolver: zodResolver(createJobFormSchema),
 		defaultValues: {
-			position: "",
-			company: "",
-			jobLocation: user?.location ?? "",
-			status: "PENDING",
-			jobType: "FULL_TIME",
+			position: job.position,
+			company: job.company,
+			jobLocation: job.jobLocation,
+			status: job.status,
+			jobType: job.jobType,
 		},
 	});
 
 	async function onSubmit(values: z.infer<typeof createJobFormSchema>) {
-		console.log(values);
+		const changedValues = Object.keys(values).reduce(
+			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			(acc: Record<string, any>, key) => {
+				const typedKey = key as keyof typeof values;
+				if (values[typedKey] !== originalValues[typedKey]) {
+					acc[key] = values[typedKey];
+				}
+				return acc;
+			},
+			{},
+		);
+
+		if (Object.keys(changedValues).length === 0) {
+			toast({ title: "No changes made" });
+			return;
+		}
+
 		try {
-			const sendData = await createJob(values as CreateJobInput).unwrap();
-			console.log(sendData);
-			toast({
-				title: "Job created successfully",
-			});
+			await updateJob({
+				id: job.id,
+				job: changedValues as Partial<typeof values>,
+			}).unwrap();
+			setOpen(false);
+			toast({ title: "Job updated successfully" });
 			form.reset();
 		} catch (error) {
 			const err = error as FetchBaseQueryError;
+			setOpen(false);
+
 			toast({
 				title:
 					"data" in err
@@ -67,7 +103,7 @@ const CreateJobForm = () => {
 		}
 	}
 
-	if (isLoading) return <Loading text="Creating job..." />;
+	if (isLoading) return <Loading text="Updating job..." />;
 	return (
 		<Form {...form}>
 			<form
@@ -176,4 +212,4 @@ const CreateJobForm = () => {
 		</Form>
 	);
 };
-export default CreateJobForm;
+export default UpdateJobForm;

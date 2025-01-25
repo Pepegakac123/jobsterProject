@@ -3,6 +3,7 @@ import type {
 	JobsPayload,
 	SearchQueryOptions,
 	StatsPayload,
+	UpdateJobInput,
 } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -42,6 +43,24 @@ export const jobsApiSlice = createApi({
 			}),
 			invalidatesTags: ["Jobs", "Stats"],
 		}),
+		updateJob: builder.mutation<
+			void,
+			{ id: number; job: Partial<UpdateJobInput> }
+		>({
+			query: ({ id, job }) => ({
+				url: `/jobs/${id}`,
+				method: "PATCH",
+				body: job,
+			}),
+			invalidatesTags: ["Jobs", "Stats"],
+		}),
+		deleteJob: builder.mutation<void, number>({
+			query: (id) => ({
+				url: `/jobs/${id}`,
+				method: "DELETE",
+			}),
+			invalidatesTags: ["Jobs", "Stats"],
+		}),
 		getStats: builder.query<StatsPayload, void>({
 			query: () => "/stats",
 			providesTags: ["Stats"],
@@ -49,5 +68,10 @@ export const jobsApiSlice = createApi({
 	}),
 });
 
-export const { useGetJobsQuery, useGetStatsQuery, useCreateJobMutation } =
-	jobsApiSlice;
+export const {
+	useGetJobsQuery,
+	useGetStatsQuery,
+	useCreateJobMutation,
+	useDeleteJobMutation,
+	useUpdateJobMutation,
+} = jobsApiSlice;
