@@ -20,6 +20,8 @@ export interface CreateJobInput {
 	company: string;
 	position: string;
 	status: "PENDING" | "REJECTED" | "INTERVIEW" | "OFFER" | "ACCEPTED";
+	jobType: "FULL_TIME" | "PART_TIME" | "INTERNSHIP" | "REMOTE";
+	jobLocation?: string;
 }
 
 export type QueryOptions = {

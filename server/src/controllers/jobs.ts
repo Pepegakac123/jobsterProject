@@ -90,8 +90,8 @@ export const getSingleJob = async (req: Request, res: Response) => {
 };
 
 export const createJob = async (req: Request, res: Response) => {
-	const { company, position, status }: CreateJobInput = req.body;
-
+	const { company, position, status, jobType, jobLocation }: CreateJobInput =
+		req.body;
 	if (!company || !position) {
 		throw new BadRequestError("Please provide all values");
 	}
@@ -102,14 +102,20 @@ export const createJob = async (req: Request, res: Response) => {
 	if (!req.user?.userId) {
 		throw new BadRequestError("You must be logged in");
 	}
+	const newJob: CreateJobInput = {
+		company,
+		position,
+		status: status || "PENDING",
+		jobType,
+	};
+	if (jobLocation) newJob.jobLocation = jobLocation;
 	const job = await prisma.jobs.create({
 		data: {
-			company,
-			position,
-			status: status || "PENDING",
+			...newJob,
 			createdBy: req.user.userId,
 		},
 	});
+	console.log(job);
 	res.status(StatusCodes.CREATED).json({ job });
 };
 
@@ -126,7 +132,13 @@ export const updateJob = async (req: Request, res: Response) => {
 		throw new BadRequestError("You must be logged in");
 	}
 
-	const { company, position, status }: Partial<CreateJobInput> = req.body;
+	const {
+		company,
+		position,
+		status,
+		jobType,
+		jobLocation,
+	}: Partial<CreateJobInput> = req.body;
 
 	// Walidacja statusu przed próbą aktualizacji
 	if (status) {
@@ -172,6 +184,8 @@ export const updateJob = async (req: Request, res: Response) => {
 	if (company) updateData.company = company;
 	if (position) updateData.position = position;
 	if (status) updateData.status = status;
+	if (jobType) updateData.jobType = jobType;
+	if (jobLocation) updateData.jobLocation = jobLocation;
 
 	// Sprawdzamy czy jest co aktualizować
 	if (Object.keys(updateData).length === 0) {
