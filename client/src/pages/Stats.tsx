@@ -65,6 +65,7 @@ const Stats = () => {
 		month: new Date(item.month).toLocaleString("en-US", { month: "short" }),
 		applications: item.count,
 	}));
+	console.log(stats?.monthlyApplications);
 
 	return (
 		<>

@@ -7,6 +7,7 @@ import { logout } from "@/store/features/user/userSlice";
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
@@ -130,6 +131,9 @@ const DashboardLayout = () => {
 										))}
 									</nav>
 								</DialogContent>
+								<DialogDescription className="hidden">
+									Mobile menu
+								</DialogDescription>
 							</Dialog>
 						)}
 						{isLaptop ? (

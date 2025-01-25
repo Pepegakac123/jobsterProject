@@ -21,23 +21,51 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
+import { useCreateJobMutation } from "@/store/features/jobs/jobsApiSlice";
+import Loading from "../Loading";
+import type { CreateJobInput } from "@/types";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 const CreateJobForm = () => {
 	const { toast } = useToast();
 	const navigate = useNavigate();
+	const { user } = useSelector((state: RootState) => state.user);
+
+	const [createJob, { isLoading }] = useCreateJobMutation();
 
 	const form = useForm<z.infer<typeof createJobFormSchema>>({
 		resolver: zodResolver(createJobFormSchema),
 		defaultValues: {
 			position: "",
 			company: "",
-			jobLocation: "",
-			jobStatus: "PENDING",
+			jobLocation: user?.location ?? "",
+			status: "PENDING",
 			jobType: "FULL_TIME",
 		},
 	});
 
-	async function onSubmit(values: z.infer<typeof createJobFormSchema>) {}
+	async function onSubmit(values: z.infer<typeof createJobFormSchema>) {
+		try {
+			await createJob(values as CreateJobInput).unwrap();
+			toast({
+				title: "Job created successfully",
+			});
+			form.reset();
+		} catch (error) {
+			const err = error as FetchBaseQueryError;
+			toast({
+				title:
+					"data" in err
+						? (err.data as { msg: string }).msg
+						: "Something went wrong",
+				variant: "destructive",
+			});
+		}
+	}
+
+	if (isLoading) return <Loading text="Creating job..." />;
 	return (
 		<Form {...form}>
 			<form
@@ -82,7 +110,7 @@ const CreateJobForm = () => {
 						<FormItem>
 							<FormLabel>Location</FormLabel>
 							<FormControl>
-								<Input placeholder="Kraków" {...field} />
+								<Input placeholder={user?.location ?? "Kraków"} {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -90,7 +118,7 @@ const CreateJobForm = () => {
 				/>
 				<FormField
 					control={form.control}
-					name="jobStatus"
+					name="status"
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Job Status</FormLabel>

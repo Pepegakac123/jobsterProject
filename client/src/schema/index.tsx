@@ -63,7 +63,7 @@ export const createJobFormSchema = z.object({
 		.min(3, "Company must be at least 3 characters")
 		.max(50, "Company too long"),
 	jobLocation: z.string().trim().default("my city"),
-	jobStatus: z.enum(["PENDING", "REJECTED", "INTERVIEW", "OFFER", "ACCEPTED"]),
+	status: z.enum(["PENDING", "REJECTED", "INTERVIEW", "OFFER", "ACCEPTED"]),
 	jobType: z.enum(["FULL_TIME", "PART_TIME", "INTERNSHIP", "REMOTE"]),
 });
 

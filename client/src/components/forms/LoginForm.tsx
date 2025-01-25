@@ -64,7 +64,7 @@ const LoginForm = ({ isMember }: { isMember: boolean }) => {
 						<FormItem>
 							<FormLabel>Email</FormLabel>
 							<FormControl>
-								<Input placeholder="test@mail.com" {...field} />
+								<Input placeholder="test@mail.com" type="email" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -77,7 +77,7 @@ const LoginForm = ({ isMember }: { isMember: boolean }) => {
 						<FormItem>
 							<FormLabel>Password</FormLabel>
 							<FormControl>
-								<Input placeholder="secretPass!@" {...field} />
+								<Input placeholder="secretPass!@" type="password" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
