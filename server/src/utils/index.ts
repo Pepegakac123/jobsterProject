@@ -73,14 +73,14 @@ export const buildOrderClause = (
 };
 
 export const getNumberOfApplicationsByMonths = async (userId: number) => {
-	const fourMonthsAgo = new Date();
-	fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4);
+	const sixMonthsAgo = new Date();
+	sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5); // -5 bo chcemy włączyć aktualny miesiąc
 
 	const monthlyApplications = await prisma.jobs.findMany({
 		where: {
 			createdBy: userId,
 			createdAt: {
-				gte: fourMonthsAgo, // greater than or equal
+				gte: sixMonthsAgo,
 			},
 		},
 		select: {
@@ -88,7 +88,12 @@ export const getNumberOfApplicationsByMonths = async (userId: number) => {
 		},
 	});
 
-	// Grupowanie po miesiącach w JavaScript
+	const last6Months = Array.from({ length: 6 }, (_, i) => {
+		const date = new Date();
+		date.setMonth(date.getMonth() - i);
+		return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`;
+	}).reverse();
+
 	const monthlyStats = monthlyApplications.reduce(
 		(acc, { createdAt }) => {
 			const monthKey = `${createdAt.getFullYear()}-${String(createdAt.getMonth() + 1).padStart(2, "0")}-01`;
@@ -98,12 +103,10 @@ export const getNumberOfApplicationsByMonths = async (userId: number) => {
 		{} as Record<string, number>,
 	);
 
-	// Konwersja na tablicę i sortowanie
-	const results = Object.entries(monthlyStats)
-		.map(([month, count]) => ({ month, count }))
-		.sort((a, b) => a.month.localeCompare(b.month));
-
-	return results;
+	return last6Months.map((month) => ({
+		month,
+		count: monthlyStats[month] || 0,
+	}));
 };
 export const getJobsByStatus = async (userId: number) => {
 	const jobsByStatus = await prisma.jobs.groupBy({
