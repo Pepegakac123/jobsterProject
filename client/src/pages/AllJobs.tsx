@@ -1,20 +1,11 @@
 import QueryJobsForm from "@/components/forms/QueryJobsForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { SearchQueryOptions, UpdateJobInput } from "@/types";
+import type { SearchQueryOptions } from "@/types";
 import { useState } from "react";
 import { useGetJobsQuery } from "@/store/features/jobs/jobsApiSlice";
 import Loading from "@/components/Loading";
-import { dateFormatter, toTitleCase } from "@/utils";
-import { MdLocationCity } from "react-icons/md";
-import { RiBriefcase4Fill } from "react-icons/ri";
-import { IoCalendar } from "react-icons/io5";
-import { GrStatusCriticalSmall } from "react-icons/gr";
-import { Button } from "@/components/ui/button";
-
 import PaginationControls from "@/components/PaginationControls";
-import DeleteJobDialog from "@/components/DeleteJobDialog";
-import UpdateJobDialog from "@/components/UpdateJobDialog";
-import { colorConfig } from "@/utils";
+import { JobCard } from "@/components/JobCard";
 
 const AllJobs = () => {
 	const [searchParams, setSearchParams] = useState<SearchQueryOptions>({
@@ -27,8 +18,7 @@ const AllJobs = () => {
 	});
 
 	const { data: jobs, isLoading } = useGetJobsQuery(searchParams);
-	if (isLoading) return <Loading />;
-	console.log(jobs);
+
 	return (
 		<>
 			<Card className="w-[90%] mx-auto mt-8 max-w-4xl shadow-animate-primary">
@@ -41,66 +31,28 @@ const AllJobs = () => {
 			</Card>
 
 			<section className="w-[90%] mx-auto mt-8 max-w-4xl flex flex-col gap-4 flex-start">
-				<p className="capitalize font-bold">{jobs?.totalJobs} jobs found</p>
-				{jobs?.jobs.map((job) => {
-					return (
-						<Card key={job.id} className="w-full shadow-sm">
-							<CardContent className="flex flex-col w-full p-4">
-								<div className=" w-full flex flex-row gap-4 justify-start border-b items-center pt-2 pb-4">
-									<span className="py-2 px-4 rounded-md bg-primary text-2xl font-extrabold shadow-sm shadow-zinc-800">
-										{job.company.charAt(0)}
-									</span>
-									<div className="flex flex-col gap-2">
-										<p className="text-sm">{toTitleCase(job.position)}</p>
-										<p className="text-zinc-400 text-xs">{job.company}</p>
-									</div>
-								</div>
-								<div className="w-full grid grid-cols-2 gap-4 py-4">
-									<div className="flex flex-col gap-6 items-start">
-										<div className="flex flex-row gap-2 items-center justify-center">
-											<MdLocationCity className="text-primary text-xl" />
-											<p className="text-md capitalize">{job.jobLocation}</p>
-										</div>
-										<div className="flex flex-row gap-2 items-center justify-center">
-											<RiBriefcase4Fill className="text-primary text-xl" />
-											<p className="text-md capitalize">
-												{toTitleCase(job.jobType).replace("_", " ")}
-											</p>
-										</div>
-									</div>
-									<div className="flex flex-col gap-6 items-start">
-										<div className="flex flex-row gap-4 items-center justify-center">
-											<IoCalendar className="text-primary text-xl" />
-											<p className="text-md capitalize">
-												{dateFormatter(job.createdAt)}
-											</p>
-										</div>
-										<div className="flex flex-row gap-2 items-center justify-center">
-											<GrStatusCriticalSmall
-												className={`text-xl ${colorConfig[job.status.toLowerCase() as keyof typeof colorConfig].text ?? "text-primary"} `}
-											/>
-											<p className="text-md capitalize">
-												{toTitleCase(job.status).replace("_", " ")}
-											</p>
-										</div>
-									</div>
-								</div>
-								<div className="flex flex-row gap-4 items-center justify-start w-full">
-									<UpdateJobDialog job={job as UpdateJobInput} />
-									<DeleteJobDialog id={job.id} />
-								</div>
-							</CardContent>
-						</Card>
-					);
-				})}
+				<p className="capitalize font-bold">
+					{jobs?.totalJobs ?? 0} jobs found
+				</p>
+				{isLoading ? (
+					<Loading />
+				) : (
+					<div className="flex flex-col gap-4">
+						{jobs?.jobs.map((job) => (
+							<JobCard key={job.id} job={job} />
+						))}
+					</div>
+				)}
 			</section>
-			{/* <Pagination /> */}
-			<PaginationControls
-				currentPage={Number(searchParams.page)}
-				totalPages={Number(jobs?.numOfPages)}
-				searchParams={searchParams}
-				setSearchParams={setSearchParams}
-			/>
+
+			{!isLoading && (
+				<PaginationControls
+					currentPage={Number(searchParams.page)}
+					totalPages={Number(jobs?.numOfPages)}
+					searchParams={searchParams}
+					setSearchParams={setSearchParams}
+				/>
+			)}
 		</>
 	);
 };
