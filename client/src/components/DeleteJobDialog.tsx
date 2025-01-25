@@ -13,6 +13,7 @@ import {
 import { useDeleteJobMutation } from "@/store/features/jobs/jobsApiSlice";
 import { useToast } from "@/hooks/use-toast";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import Loading from "./Loading";
 
 const DeleteJobDialog = ({ id }: { id: number }) => {
 	const { toast } = useToast();
@@ -43,24 +44,30 @@ const DeleteJobDialog = ({ id }: { id: number }) => {
 			</AlertDialogTrigger>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+					<AlertDialogTitle>Are you sure?</AlertDialogTitle>
 					<AlertDialogDescription>
-						This action cannot be undone. This will permanently delete your job
-						entry.
+						This action cannot be undone.
 					</AlertDialogDescription>
 				</AlertDialogHeader>
-				<AlertDialogFooter>
-					<AlertDialogCancel className={isLoading ? "pointer-events-none" : ""}>
-						Cancel
-					</AlertDialogCancel>
-					<AlertDialogAction
-						className="bg-destructive text-destructive-foreground hover:bg-destructive/80"
-						onClick={() => handleDelete(id)}
-						disabled={isLoading}
-					>
-						Delete
-					</AlertDialogAction>
-				</AlertDialogFooter>
+
+				{isLoading ? (
+					<Loading />
+				) : (
+					<AlertDialogFooter>
+						<AlertDialogCancel
+							className={isLoading ? "pointer-events-none" : ""}
+						>
+							Cancel
+						</AlertDialogCancel>
+						<AlertDialogAction
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/80"
+							onClick={() => handleDelete(id)}
+							disabled={isLoading}
+						>
+							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				)}
 			</AlertDialogContent>
 		</AlertDialog>
 	);

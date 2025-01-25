@@ -57,6 +57,8 @@ export default {
 				pending: "hsl(var(--pending))",
 				interview: "hsl(var(--interview))",
 				rejected: "hsl(var(--rejected))",
+				offer: "hsl(var(--offer))",
+				accepted: "hsl(var(--accepted))",
 			},
 		},
 	},

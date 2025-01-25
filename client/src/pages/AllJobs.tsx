@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import PaginationControls from "@/components/PaginationControls";
 import DeleteJobDialog from "@/components/DeleteJobDialog";
 import UpdateJobDialog from "@/components/UpdateJobDialog";
-import { colorConfig } from "@/components/StatsBox";
+import { colorConfig } from "@/utils";
 
 const AllJobs = () => {
 	const [searchParams, setSearchParams] = useState<SearchQueryOptions>({
@@ -77,7 +77,7 @@ const AllJobs = () => {
 										</div>
 										<div className="flex flex-row gap-2 items-center justify-center">
 											<GrStatusCriticalSmall
-												className={`text-xl ${colorConfig[job.status.toLowerCase() as keyof typeof colorConfig].text} `}
+												className={`text-xl ${colorConfig[job.status.toLowerCase() as keyof typeof colorConfig].text ?? "text-primary"} `}
 											/>
 											<p className="text-md capitalize">
 												{toTitleCase(job.status).replace("_", " ")}

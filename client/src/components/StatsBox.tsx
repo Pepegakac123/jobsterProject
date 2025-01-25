@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { colorConfig } from "@/utils";
 import type { IconType } from "react-icons/lib";
 
 interface StatsBoxProps {
@@ -7,20 +8,6 @@ interface StatsBoxProps {
 	color: "pending" | "rejected" | "interview";
 	icon: IconType;
 }
-export const colorConfig = {
-	pending: {
-		text: "text-pending",
-		background: "bg-pending/20",
-	},
-	rejected: {
-		text: "text-rejected",
-		background: "bg-rejected/20",
-	},
-	interview: {
-		text: "text-interview",
-		background: "bg-interview/20",
-	},
-} as const;
 
 const StatsBox = ({ number, title, color, icon: Icon }: StatsBoxProps) => {
 	return (

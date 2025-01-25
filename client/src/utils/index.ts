@@ -1,5 +1,28 @@
 import type { UserInfo } from "@/types";
 
+export const colorConfig = {
+	pending: {
+		text: "text-pending",
+		background: "bg-pending/20",
+	},
+	rejected: {
+		text: "text-rejected",
+		background: "bg-rejected/20",
+	},
+	interview: {
+		text: "text-interview",
+		background: "bg-interview/20",
+	},
+	offer: {
+		text: "text-offer",
+		background: "bg-offer/20",
+	},
+	accepted: {
+		text: "text-accepted",
+		background: "bg-accepted/20",
+	},
+} as const;
+
 export const addUserToLocalStorage = (user: UserInfo) => {
 	localStorage.setItem("user", JSON.stringify(user));
 };
