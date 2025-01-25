@@ -37,17 +37,18 @@ const LoginForm = ({ isMember }: { isMember: boolean }) => {
 			const resultAction = await dispatch(loginUser(values));
 			if (loginUser.fulfilled.match(resultAction)) {
 				toast({
-					title: "Logged in successfully",
+					title: "Zalogowano pomyślnie",
 				});
 				navigate("/dashboard");
 			} else {
+				form.resetField("password");
 				toast({
 					title: resultAction.payload as string,
 					variant: "destructive",
 				});
 			}
 		} catch (error) {
-			console.log(error);
+			form.resetField("password");
 		}
 	}
 	return (

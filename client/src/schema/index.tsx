@@ -30,6 +30,27 @@ export const registerFormSchema = z.object({
 	location: z.string().trim().optional(),
 });
 
+export const updateProfileFormSchema = z.object({
+	name: z
+		.string()
+		.trim()
+		.min(3, "Name must be at least 3 characters")
+		.max(50, "Name too long"),
+
+	lastName: z.string().trim().optional(),
+
+	email: z
+		.string()
+		.trim()
+		.email("Invalid email")
+		.regex(
+			/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+			"Invalid email format",
+		)
+		.max(255),
+	location: z.string().trim().optional(),
+});
+
 export const loginFormSchema = z.object({
 	email: z
 		.string()

@@ -6,6 +6,13 @@ export interface UserInfo {
 	token: string;
 }
 
+export interface UpdatedUser {
+	email: string;
+	name: string;
+	lastName?: string;
+	location?: string;
+}
+
 export type Status =
 	| "PENDING"
 	| "REJECTED"

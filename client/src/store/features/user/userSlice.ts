@@ -1,6 +1,6 @@
 // src/store/features/user/userSlice.ts
 import { api } from "@/api";
-import type { UserInfo } from "@/types";
+import type { UpdatedUser, UserInfo } from "@/types";
 import {
 	addUserToLocalStorage,
 	getUserFromLocalStorage,
@@ -8,9 +8,6 @@ import {
 } from "@/utils";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
-import { jobsApiSlice } from "../jobs/jobsApiSlice";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "@/store";
 
 // Definicja interfejsów
 interface LoginInput {
@@ -39,7 +36,6 @@ const initialState: UserState = {
 export const loginUser = createAsyncThunk<UserInfo, LoginInput>(
 	"user/login",
 	async (credentials, thunkAPI) => {
-		console.log(credentials);
 		try {
 			const { data }: { data: { user: UserInfo } } = await api.post(
 				"/api/v1/auth/login",
@@ -105,6 +101,23 @@ export const loginDemoUser = createAsyncThunk(
 	},
 );
 
+export const updateUser = createAsyncThunk<UserInfo, UpdatedUser>(
+	"user/update",
+	async (updatedUser, thunkAPI) => {
+		try {
+			const { data } = await api.patch("/api/v1/auth/update", updatedUser);
+			return data.user;
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				return thunkAPI.rejectWithValue(
+					error.response?.data?.msg || "Something went wrong",
+				);
+			}
+			return thunkAPI.rejectWithValue("An error occurred");
+		}
+	},
+);
+
 const userSlice = createSlice({
 	name: "user",
 	initialState,
@@ -147,6 +160,17 @@ const userSlice = createSlice({
 			})
 			.addCase(loginDemoUser.rejected, (state) => {
 				state.isLoading = false;
+			})
+			.addCase(updateUser.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(updateUser.rejected, (state) => {
+				state.isLoading = false;
+			})
+			.addCase(updateUser.fulfilled, (state, { payload: user }) => {
+				state.isLoading = false;
+				state.user = user;
+				addUserToLocalStorage(user);
 			});
 	},
 });

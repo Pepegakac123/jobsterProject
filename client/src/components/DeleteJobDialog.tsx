@@ -21,7 +21,7 @@ const DeleteJobDialog = ({ id }: { id: number }) => {
 
 	const handleDelete = async (id: number) => {
 		try {
-			await deleteJob(id);
+			await deleteJob(id).unwrap();
 			toast({
 				title: "Job deleted successfully",
 			});
