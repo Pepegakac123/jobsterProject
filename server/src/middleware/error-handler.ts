@@ -32,7 +32,7 @@ export default function errorHandlerMiddleware(
 					msg: "Record not found",
 				});
 			default:
-				console.error("Prisma Error:", err);
+				// console.error("Prisma Error:", err);
 				return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
 					msg: "Database error occurred",
 				});

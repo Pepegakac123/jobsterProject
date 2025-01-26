@@ -1,7 +1,12 @@
-import path from "node:path";
 import "express-async-errors";
 import express from "express";
-import type { Express, Request, Response, NextFunction } from "express";
+import type {
+	Express,
+	Request,
+	Response,
+	NextFunction,
+	RequestHandler,
+} from "express";
 import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/error-handler.js";
 import authenticateUser from "./middleware/authentication.js";
@@ -13,18 +18,17 @@ import statsRouter from "./routes/stats.js";
 import helmet from "helmet";
 import xss from "xss-clean";
 import cors from "cors";
+import compression from "compression";
 
 export const app: Express = express();
 app.set("trust proxy", 1);
-
-// app.use(express.static(path.resolve(__dirname, "./client/build")));
 app.use(express.json());
 app.use(helmet());
 app.use(xss());
-
+app.use(compression() as RequestHandler);
 app.use(
 	cors({
-		origin: "http://localhost:5173", // adres twojego frontendu
+		origin: process.env.CLIENT_URL || "http://localhost:5173",
 		credentials: true,
 	}),
 );
