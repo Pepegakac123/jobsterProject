@@ -64,6 +64,7 @@ Projekt rozwojowy stworzony w celu nauki i demonstracji umiejętności fullstack
    - Praca z systemem kontroli wersji
 
 ## 🔧 Struktura Projektu
+```
 jobsterProject/
 ├── client/                # Frontend React
 │   ├── src/
@@ -93,7 +94,7 @@ jobsterProject/
     ├── tests/            # Testy
     ├── prisma/           # Konfiguracja ORM
     └── package.json
-
+```
 ## 🧪 Przykłady Implementacji
 
 ### Autentykacja z JWT
