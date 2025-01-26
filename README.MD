@@ -9,9 +9,15 @@
 [![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![Redux](https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white)](https://redux.js.org/)
 
+
+
 ## 📝 O Projekcie
 
 Projekt rozwojowy stworzony w celu nauki i demonstracji umiejętności fullstack developera. Aplikacja służy do zarządzania procesem aplikowania o pracę, implementując podstawowe operacje CRUD, autoryzację oraz wizualizację danych.
+
+## [Jobster - Live Website](https://jobster.kacperadamczyk.pl/)
+
+![Jobster](/images/jobster.gif)
 
 ### 🌟 Zaimplementowane Funkcjonalności
 
