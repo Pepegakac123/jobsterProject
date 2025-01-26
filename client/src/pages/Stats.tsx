@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/chart";
 import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Link } from "react-router-dom";
+import StatsLoading from "@/components/LoadingSkeletons/StatsLoading";
 
 interface IconConfig {
 	[key: string]: IconType;
@@ -38,12 +39,7 @@ const chartConfig = {
 
 const Stats = () => {
 	const { data: stats, isLoading, error } = useGetStatsQuery();
-	if (isLoading)
-		return (
-			<div>
-				<Loading />
-			</div>
-		);
+	if (isLoading) return <StatsLoading />;
 	if (error) return <div>We are experiencing some problems</div>;
 
 	if (stats?.jobsByStatus.length === 0)

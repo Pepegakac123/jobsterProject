@@ -6,6 +6,7 @@ import { useGetJobsQuery } from "@/store/features/jobs/jobsApiSlice";
 import Loading from "@/components/Loading";
 import PaginationControls from "@/components/PaginationControls";
 import { JobCard } from "@/components/JobCard";
+import JobsLoading from "@/components/LoadingSkeletons/JobsLoading";
 
 const AllJobs = () => {
 	const [searchParams, setSearchParams] = useState<SearchQueryOptions>({
@@ -35,7 +36,7 @@ const AllJobs = () => {
 					{jobs?.totalJobs ?? 0} jobs found
 				</p>
 				{isLoading ? (
-					<Loading />
+					[1, 2, 3].map((item) => <JobsLoading key={item} />)
 				) : (
 					<div className="flex flex-col gap-4">
 						{jobs?.jobs.map((job) => (
