@@ -59,7 +59,6 @@ export const loginUser = createAsyncThunk<UserInfo, LoginInput>(
 export const registerUser = createAsyncThunk<UserInfo, registerInput>(
 	"user/register",
 	async (credentials, thunkAPI) => {
-		console.log(credentials);
 		try {
 			const { data }: { data: { user: UserInfo } } = await api.post(
 				"/api/v1/auth/register",

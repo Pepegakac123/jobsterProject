@@ -10,7 +10,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const jobsApiSlice = createApi({
 	reducerPath: "jobsApi",
 	baseQuery: fetchBaseQuery({
-		baseUrl: process.env.VITE_API_URL || "http://localhost:8000/api/v1",
+		baseUrl: import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1",
 		prepareHeaders: (headers) => {
 			const token = localStorage.getItem("token");
 			if (token) {

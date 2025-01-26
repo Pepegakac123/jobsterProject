@@ -1,46 +1,49 @@
 /// <reference types="vitest" />
-import { defineConfig } from "vite";
+/// <reference types="vite/client" />
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
-import type { UserConfig } from "vite";
+// import type { UserConfig } from "vite";
 
-interface ConfigType extends UserConfig {
-	test?: {
-		globals?: boolean;
-		environment?: string;
-		setupFiles?: string | string[];
-		css?: boolean;
-		coverage?: {
-			provider: string;
-			reporter: string[];
-		};
-	};
-}
+// interface ConfigType extends UserConfig {
+// 	test?: {
+// 		globals?: boolean;
+// 		environment?: string;
+// 		setupFiles?: string | string[];
+// 		css?: boolean;
+// 		coverage?: {
+// 			provider: string;
+// 			reporter: string[];
+// 		};
+// 	};
+// }
 
-export default defineConfig({
-	plugins: [react()],
-	resolve: {
-		alias: {
-			"@": path.resolve(__dirname, "./src"),
-		},
-	},
-	server: {
-		proxy: {
-			"/api/v1": {
-				// Zmień z /api na /api/v1
-				target: process.env.VITE_API_URL || "http://localhost:8000/api/v1",
-				changeOrigin: true,
+export default defineConfig(({ mode }) => {
+	const env = loadEnv(mode, process.cwd());
+
+	return {
+		plugins: [react()],
+		resolve: {
+			alias: {
+				"@": path.resolve(__dirname, "./src"),
 			},
 		},
-	},
-	test: {
-		globals: true,
-		environment: "jsdom",
-		setupFiles: "./src/test/setup.ts",
-		css: true,
-		coverage: {
-			provider: "v8",
-			reporter: ["text", "json", "html"],
+		server: {
+			proxy: {
+				"/api/v1": {
+					target: env.VITE_API_URL || "http://localhost:8000",
+					changeOrigin: true,
+				},
+			},
 		},
-	},
-} as ConfigType);
+		test: {
+			globals: true,
+			environment: "jsdom",
+			setupFiles: "./src/test/setup.ts",
+			coverage: {
+				provider: "v8",
+				reporter: ["text", "json", "html"],
+			},
+		},
+	};
+});
