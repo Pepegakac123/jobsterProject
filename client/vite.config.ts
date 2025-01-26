@@ -28,7 +28,7 @@ export default defineConfig({
 		proxy: {
 			"/api/v1": {
 				// Zmień z /api na /api/v1
-				target: "http://localhost:8000",
+				target: process.env.VITE_API_URL || "http://localhost:8000/api/v1",
 				changeOrigin: true,
 			},
 		},
