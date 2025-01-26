@@ -10,7 +10,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const jobsApiSlice = createApi({
 	reducerPath: "jobsApi",
 	baseQuery: fetchBaseQuery({
-		baseUrl: import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1",
+		baseUrl: `${import.meta.env.VITE_API_URL}` || "http://localhost:8000",
 		prepareHeaders: (headers) => {
 			const token = localStorage.getItem("token");
 			if (token) {
@@ -23,7 +23,7 @@ export const jobsApiSlice = createApi({
 	endpoints: (builder) => ({
 		getJobs: builder.query<JobsPayload, SearchQueryOptions>({
 			query: ({ search, status, sort, jobType, page, limit }) => ({
-				url: "/jobs",
+				url: "/api/v1/jobs",
 				params: {
 					search,
 					status,
@@ -37,7 +37,7 @@ export const jobsApiSlice = createApi({
 		}),
 		createJob: builder.mutation<void, CreateJobInput>({
 			query: (newJob) => ({
-				url: "/jobs",
+				url: "/api/v1/jobs",
 				method: "POST",
 				body: newJob,
 			}),
@@ -48,7 +48,7 @@ export const jobsApiSlice = createApi({
 			{ id: number; job: Partial<UpdateJobInput> }
 		>({
 			query: ({ id, job }) => ({
-				url: `/jobs/${id}`,
+				url: `/api/v1/jobs/${id}`,
 				method: "PATCH",
 				body: job,
 			}),
@@ -56,13 +56,13 @@ export const jobsApiSlice = createApi({
 		}),
 		deleteJob: builder.mutation<void, number>({
 			query: (id) => ({
-				url: `/jobs/${id}`,
+				url: `/api/v1/jobs/${id}`,
 				method: "DELETE",
 			}),
 			invalidatesTags: ["Jobs", "Stats"],
 		}),
 		getStats: builder.query<StatsPayload, void>({
-			query: () => "/stats",
+			query: () => "/api/v1/stats",
 			providesTags: ["Stats"],
 		}),
 	}),
