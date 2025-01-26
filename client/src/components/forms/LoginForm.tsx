@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -19,11 +18,11 @@ import { useToast } from "@/hooks/use-toast";
 import { loginUser } from "@/store/features/user/userSlice";
 import { useNavigate } from "react-router-dom";
 
-const LoginForm = ({ isMember }: { isMember: boolean }) => {
+const LoginForm = () => {
 	const { toast } = useToast();
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
-	const { isLoading, user } = useSelector((state: RootState) => state.user);
+	const { isLoading } = useSelector((state: RootState) => state.user);
 
 	const form = useForm<z.infer<typeof loginFormSchema>>({
 		resolver: zodResolver(loginFormSchema),

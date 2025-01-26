@@ -13,25 +13,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
-import { useCreateJobMutation } from "@/store/features/jobs/jobsApiSlice";
 import Loading from "../Loading";
-import type { CreateJobInput } from "@/types";
-import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { updateUser } from "@/store/features/user/userSlice";
 
 const UpdateProfileForm = () => {
 	const { toast } = useToast();
-	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 	const { user, isLoading } = useSelector((state: RootState) => state.user);
 

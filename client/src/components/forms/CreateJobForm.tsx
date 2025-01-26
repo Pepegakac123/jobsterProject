@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
 import {
 	Select,
 	SelectContent,
@@ -30,7 +29,6 @@ import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 const CreateJobForm = () => {
 	const { toast } = useToast();
-	const navigate = useNavigate();
 	const { user } = useSelector((state: RootState) => state.user);
 
 	const [createJob, { isLoading }] = useCreateJobMutation();

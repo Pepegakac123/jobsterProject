@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SearchQueryOptions } from "@/types";
 import { useState } from "react";
 import { useGetJobsQuery } from "@/store/features/jobs/jobsApiSlice";
-import Loading from "@/components/Loading";
 import PaginationControls from "@/components/PaginationControls";
 import { JobCard } from "@/components/JobCard";
 import JobsLoading from "@/components/LoadingSkeletons/JobsLoading";

@@ -18,10 +18,10 @@ import type { AppDispatch, RootState } from "@/store";
 import { registerUser } from "@/store/features/user/userSlice";
 import { useNavigate } from "react-router-dom";
 
-const RegisterForm = ({ isMember }: { isMember: boolean }) => {
+const RegisterForm = () => {
 	const { toast } = useToast();
 	const dispatch = useDispatch<AppDispatch>();
-	const { isLoading, user } = useSelector((state: RootState) => state.user);
+	const { isLoading } = useSelector((state: RootState) => state.user);
 	const navigate = useNavigate();
 	const form = useForm<z.infer<typeof registerFormSchema>>({
 		resolver: zodResolver(registerFormSchema),

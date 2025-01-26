@@ -1,6 +1,3 @@
-import { redirect } from "react-router-dom";
-import { api } from "@/api";
-import { AxiosError } from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CreateJobForm from "@/components/forms/CreateJobForm";
 

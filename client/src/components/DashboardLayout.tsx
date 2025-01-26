@@ -2,7 +2,7 @@ import Logo from "./Logo";
 import { RiMenu4Line } from "react-icons/ri";
 import { Button } from "./ui/button";
 import { useDispatch } from "react-redux";
-import { store, type AppDispatch } from "@/store";
+import { type AppDispatch } from "@/store";
 import { logout } from "@/store/features/user/userSlice";
 import {
 	Dialog,

@@ -1,7 +1,7 @@
 import { createJobFormSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { set, type z } from "zod";
+import { type z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
 	Form,

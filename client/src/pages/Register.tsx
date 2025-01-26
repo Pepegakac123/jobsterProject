@@ -1,14 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
 	Card,
 	CardContent,
-	CardDescription,
 	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
 import Logo from "@/components/Logo";
-import { Link, useNavigate } from "react-router-dom";
 import { LoginForm, RegisterForm } from "@/components/forms";
 import TestUserBtn from "@/components/TestUserBtn";
 import { useSelector } from "react-redux";
@@ -25,11 +23,7 @@ const Register = () => {
 					<CardTitle>{isMember ? "Login" : "Register"}</CardTitle>
 				</CardHeader>
 				<CardContent>
-					{isMember ? (
-						<LoginForm isMember={isMember} />
-					) : (
-						<RegisterForm isMember={isMember} />
-					)}
+					{isMember ? <LoginForm /> : <RegisterForm />}
 					<TestUserBtn />
 				</CardContent>
 				<CardFooter className="flex justify-center gap-2">

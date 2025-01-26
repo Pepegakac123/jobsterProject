@@ -3,11 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
 	RiTimeLine, // Pending
 	RiCloseLine, // Declined
-	RiCheckLine, // Accepted
 	RiTeamLine, // Interview
 } from "react-icons/ri";
 import { useGetStatsQuery } from "@/store/features/jobs/jobsApiSlice";
-import Loading from "@/components/Loading";
 import type { IconType } from "react-icons/lib";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
