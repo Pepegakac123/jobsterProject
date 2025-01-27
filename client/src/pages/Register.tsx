@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Card,
 	CardContent,
@@ -11,10 +11,20 @@ import { LoginForm, RegisterForm } from "@/components/forms";
 import TestUserBtn from "@/components/TestUserBtn";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
+import { useToast } from "@/hooks/use-toast";
 const Register = () => {
 	const [isMember, setIsMember] = useState<boolean>(true);
 	const { isLoading } = useSelector((state: RootState) => state.user);
+	const { toast } = useToast();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (isLoading) {
+			toast({
+				title: "Logging In...",
+			});
+		}
+	}, [isLoading]);
 	return (
 		<main className="grid w-full h-screen place-items-center bg-muted/50">
 			<Card className="w-[90%] max-w-md shadow-animate-primary">

@@ -23,7 +23,6 @@ const LoginForm = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 	const { isLoading } = useSelector((state: RootState) => state.user);
-
 	const form = useForm<z.infer<typeof loginFormSchema>>({
 		resolver: zodResolver(loginFormSchema),
 		defaultValues: {
@@ -33,7 +32,17 @@ const LoginForm = () => {
 	});
 	async function onSubmit(values: z.infer<typeof loginFormSchema>) {
 		try {
+			const loadingTimeout = setTimeout(() => {
+				if (isLoading) {
+					toast({
+						title: "Please be patient",
+						description:
+							"Due to free hosting, initial connection may take up to 30 seconds while the server is starting up. Your request is being processed...",
+					});
+				}
+			}, 3000);
 			const resultAction = await dispatch(loginUser(values));
+			clearTimeout(loadingTimeout);
 			if (loginUser.fulfilled.match(resultAction)) {
 				toast({
 					title: "Zalogowano pomyślnie",

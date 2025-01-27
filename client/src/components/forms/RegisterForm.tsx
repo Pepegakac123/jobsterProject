@@ -35,7 +35,17 @@ const RegisterForm = () => {
 	});
 	async function onSubmit(values: z.infer<typeof registerFormSchema>) {
 		try {
+			const loadingTimeout = setTimeout(() => {
+				if (isLoading) {
+					toast({
+						title: "Please be patient",
+						description:
+							"Due to free hosting, initial connection may take up to 30 seconds while the server is starting up. Your request is being processed...",
+					});
+				}
+			}, 3000);
 			const resultAction = await dispatch(registerUser(values));
+			clearTimeout(loadingTimeout);
 			if (registerUser.fulfilled.match(resultAction)) {
 				toast({
 					title: "Registered in successfully",
