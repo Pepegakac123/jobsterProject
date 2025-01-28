@@ -16,13 +16,18 @@ import { useToast } from "@/hooks/use-toast";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
 import Loading from "../Loading";
-import { updateUser } from "@/store/features/user/userSlice";
+import {
+	updateProfileImage,
+	updateUser,
+} from "@/store/features/user/userSlice";
+import { useState } from "react";
 
 const UpdateProfileForm = () => {
+	const baseApiUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8000";
 	const { toast } = useToast();
 	const dispatch = useDispatch<AppDispatch>();
 	const { user, isLoading } = useSelector((state: RootState) => state.user);
-
+	const [preview, setPreview] = useState<string | null>(null);
 	const form = useForm<z.infer<typeof updateProfileFormSchema>>({
 		resolver: zodResolver(updateProfileFormSchema),
 		defaultValues: {
@@ -30,6 +35,7 @@ const UpdateProfileForm = () => {
 			email: user?.email,
 			lastName: user?.lastName,
 			location: user?.location,
+			profileImage: "",
 		},
 	});
 
@@ -43,25 +49,46 @@ const UpdateProfileForm = () => {
 				form.reset();
 				return;
 			}
-			const resultAction = await dispatch(updateUser(values));
-			if (updateUser.fulfilled.match(resultAction)) {
-				toast({
-					title: "Profile updated successfully",
-				});
-				// Jeśli wszystko poszło dobrze, wyświetl success toast
-				return;
+
+			const fileInput = form.getValues("profileImage");
+			if (fileInput instanceof File) {
+				const formData = new FormData();
+				formData.append("image", fileInput);
+
+				const uploadResult = await dispatch(updateProfileImage(formData));
+				if (updateProfileImage.fulfilled.match(uploadResult)) {
+					console.log("uploadResult", uploadResult);
+					const updateResult = await dispatch(
+						updateUser({
+							...values,
+							profileImage: uploadResult.payload.image.src,
+						}),
+					);
+
+					if (updateUser.fulfilled.match(updateResult)) {
+						toast({
+							title: "Profile updated successfully",
+						});
+						return;
+					}
+				}
+			} else {
+				// Aktualizuj profil bez zdjęcia
+				const resultAction = await dispatch(updateUser(values));
+				if (updateUser.fulfilled.match(resultAction)) {
+					toast({
+						title: "Profile updated successfully",
+					});
+					return;
+				}
 			}
-			// Jeśli akcja nie jest fulfilled, rzuć błąd
-			throw resultAction;
 		} catch (error) {
-			// Obsługa błędu z Redux Toolkit
 			if (error && typeof error === "object" && "payload" in error) {
 				toast({
 					title: error.payload as string,
 					variant: "destructive",
 				});
 			} else {
-				// Obsługa nieoczekiwanych błędów
 				toast({
 					title: "An unexpected error occurred",
 					variant: "destructive",
@@ -69,6 +96,20 @@ const UpdateProfileForm = () => {
 			}
 		}
 	}
+
+	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = e.target.files;
+		if (files && files.length > 0) {
+			const file = files[0];
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				setPreview(reader.result as string);
+			};
+			reader.readAsDataURL(file);
+			// Przekaż bezpośrednio plik
+			form.setValue("profileImage", file);
+		}
+	};
 
 	if (isLoading) return <Loading text="Updating user profile..." />;
 	return (
@@ -78,6 +119,36 @@ const UpdateProfileForm = () => {
 				className="space-y-6 grid grid-cols-1 lg:grid-cols-3 max-w-4xl mx-auto gap-x-4 items-baseline"
 				data-testid="create-job-form"
 			>
+				<FormField
+					control={form.control}
+					name="profileImage"
+					render={({ field: { value, onChange, ...field } }) => (
+						<FormItem className="flex flex-col items-center gap-4">
+							<FormLabel>Profile Image</FormLabel>
+							<div className="w-full flex gap-4 items-center">
+								<img
+									src={
+										preview ||
+										`${baseApiUrl}${user?.profileImage}` ||
+										"/default-avatar.png"
+									}
+									alt="Profile"
+									className="w-8 h-8 object-cover rounded-full"
+								/>
+
+								<FormControl>
+									<Input
+										type="file"
+										accept="image/*"
+										onChange={handleImageChange}
+										{...field}
+									/>
+								</FormControl>
+							</div>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
 				<FormField
 					control={form.control}
 					name="name"

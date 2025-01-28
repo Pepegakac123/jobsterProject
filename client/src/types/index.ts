@@ -3,6 +3,7 @@ export interface UserInfo {
 	lastName: string;
 	location: string;
 	name: string;
+	profileImage: string;
 	token: string;
 }
 
@@ -11,6 +12,7 @@ export interface UpdatedUser {
 	name: string;
 	lastName?: string;
 	location?: string;
+	profileImage?: string;
 }
 
 export type Status =

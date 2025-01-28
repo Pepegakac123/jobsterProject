@@ -116,6 +116,35 @@ export const updateUser = createAsyncThunk<UserInfo, UpdatedUser>(
 		}
 	},
 );
+interface UploadResponse {
+	image: {
+		src: string;
+	};
+}
+export const updateProfileImage = createAsyncThunk<UploadResponse, FormData>(
+	"/upload",
+	async (formData: FormData, thunkAPI) => {
+		try {
+			const { data } = await api.post<UploadResponse>(
+				"/api/v1/upload",
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				},
+			);
+			return data;
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				return thunkAPI.rejectWithValue(
+					error.response?.data?.msg || "Something went wrong",
+				);
+			}
+			return thunkAPI.rejectWithValue("An error occurred");
+		}
+	},
+);
 
 const userSlice = createSlice({
 	name: "user",
@@ -170,6 +199,19 @@ const userSlice = createSlice({
 				state.isLoading = false;
 				state.user = user;
 				addUserToLocalStorage(user);
+			})
+			.addCase(updateProfileImage.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(updateProfileImage.rejected, (state) => {
+				state.isLoading = false;
+			})
+			.addCase(updateProfileImage.fulfilled, (state, { payload }) => {
+				state.isLoading = false;
+				state.user = {
+					...state.user,
+					profileImage: payload.image.src,
+				} as UserInfo;
 			});
 	},
 });

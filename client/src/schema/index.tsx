@@ -49,6 +49,7 @@ export const updateProfileFormSchema = z.object({
 		)
 		.max(255),
 	location: z.string().trim().optional(),
+	profileImage: z.any(),
 });
 
 export const loginFormSchema = z.object({

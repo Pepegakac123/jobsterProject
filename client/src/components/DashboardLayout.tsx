@@ -2,7 +2,7 @@ import Logo from "./Logo";
 import { RiMenu4Line } from "react-icons/ri";
 import { Button } from "./ui/button";
 import { useDispatch } from "react-redux";
-import { type AppDispatch } from "@/store";
+import type { AppDispatch } from "@/store";
 import { logout } from "@/store/features/user/userSlice";
 import {
 	Dialog,
@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { jobsApiSlice } from "@/store/features/jobs/jobsApiSlice";
 import { useToast } from "@/hooks/use-toast";
+import UserAvatar from "./userAvatar";
 export const loader = async () => {
 	const token = localStorage.getItem("token");
 
@@ -141,13 +142,15 @@ const DashboardLayout = () => {
 						) : (
 							<Logo className="w-42" />
 						)}
-
-						<Button
-							className="bg-primary uppercase p-2 font-bold h-8 text-xs"
-							onClick={handleLogout}
-						>
-							Logout
-						</Button>
+						<div className="flex items-center gap-4 sm:gap-8">
+							<UserAvatar />
+							<Button
+								className="bg-primary uppercase p-2 font-bold h-8 text-xs"
+								onClick={handleLogout}
+							>
+								Logout
+							</Button>
+						</div>
 					</div>
 				</nav>
 				<section className="bg-background w-full">
