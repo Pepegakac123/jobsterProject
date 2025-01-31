@@ -17,7 +17,7 @@ import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { jobsApiSlice } from "@/store/features/jobs/jobsApiSlice";
 import { useToast } from "@/hooks/use-toast";
-import UserAvatar from "./userAvatar";
+import UserAvatar from "./UserAvatar";
 export const loader = async () => {
 	const token = localStorage.getItem("token");
 

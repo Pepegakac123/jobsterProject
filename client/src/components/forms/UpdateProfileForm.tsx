@@ -23,7 +23,6 @@ import {
 import { useState } from "react";
 
 const UpdateProfileForm = () => {
-	const baseApiUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8000";
 	const { toast } = useToast();
 	const dispatch = useDispatch<AppDispatch>();
 	const { user, isLoading } = useSelector((state: RootState) => state.user);
@@ -129,8 +128,8 @@ const UpdateProfileForm = () => {
 								<img
 									src={
 										preview ||
-										`${baseApiUrl}${user?.profileImage}` ||
-										"/default-avatar.png"
+										`${user?.profileImage}` ||
+										"../../assets/images/defaultAvatar.png"
 									}
 									alt="Profile"
 									className="w-8 h-8 object-cover rounded-full"
