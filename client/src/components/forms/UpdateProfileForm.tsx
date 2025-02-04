@@ -56,7 +56,6 @@ const UpdateProfileForm = () => {
 
 				const uploadResult = await dispatch(updateProfileImage(formData));
 				if (updateProfileImage.fulfilled.match(uploadResult)) {
-					console.log("uploadResult", uploadResult);
 					const updateResult = await dispatch(
 						updateUser({
 							...values,

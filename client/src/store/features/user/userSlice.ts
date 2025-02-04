@@ -189,6 +189,9 @@ const userSlice = createSlice({
 			.addCase(loginDemoUser.rejected, (state) => {
 				state.isLoading = false;
 			})
+			.addCase(loginDemoUser.pending, (state) => {
+				state.isLoading = true;
+			})
 			.addCase(updateUser.pending, (state) => {
 				state.isLoading = true;
 			})

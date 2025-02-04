@@ -45,7 +45,7 @@ const LoginForm = () => {
 			clearTimeout(loadingTimeout);
 			if (loginUser.fulfilled.match(resultAction)) {
 				toast({
-					title: "Zalogowano pomyślnie",
+					title: "Logged In Successfully",
 				});
 				navigate("/dashboard");
 			} else {
