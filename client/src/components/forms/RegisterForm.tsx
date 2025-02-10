@@ -34,30 +34,35 @@ const RegisterForm = () => {
 		},
 	});
 	async function onSubmit(values: z.infer<typeof registerFormSchema>) {
+		const loadingTimeout = setTimeout(() => {
+			if (isLoading) {
+				toast({
+					title: "Please be patient",
+					description:
+						"Due to free hosting, initial connection may take up to 30 seconds while the server is starting up. Your request is being processed...",
+				});
+			}
+		}, 3000);
 		try {
-			const loadingTimeout = setTimeout(() => {
-				if (isLoading) {
-					toast({
-						title: "Please be patient",
-						description:
-							"Due to free hosting, initial connection may take up to 30 seconds while the server is starting up. Your request is being processed...",
-					});
-				}
-			}, 3000);
 			const resultAction = await dispatch(registerUser(values));
-			clearTimeout(loadingTimeout);
 			if (registerUser.fulfilled.match(resultAction)) {
+				clearTimeout(loadingTimeout);
+
 				toast({
 					title: "Registered in successfully",
 				});
 				navigate("/dashboard");
 			} else {
+				clearTimeout(loadingTimeout);
+
 				toast({
 					title: resultAction.payload as string,
 					variant: "destructive",
 				});
 			}
 		} catch (error) {
+			clearTimeout(loadingTimeout);
+
 			console.log(error);
 		}
 	}

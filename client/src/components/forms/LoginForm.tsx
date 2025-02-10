@@ -31,24 +31,27 @@ const LoginForm = () => {
 		},
 	});
 	async function onSubmit(values: z.infer<typeof loginFormSchema>) {
+		const loadingTimeout = setTimeout(() => {
+			if (isLoading) {
+				toast({
+					title: "Please be patient",
+					description:
+						"Due to free hosting, initial connection may take up to 30 seconds while the server is starting up. Your request is being processed...",
+				});
+			}
+		}, 3000);
 		try {
-			const loadingTimeout = setTimeout(() => {
-				if (isLoading) {
-					toast({
-						title: "Please be patient",
-						description:
-							"Due to free hosting, initial connection may take up to 30 seconds while the server is starting up. Your request is being processed...",
-					});
-				}
-			}, 3000);
 			const resultAction = await dispatch(loginUser(values));
-			clearTimeout(loadingTimeout);
 			if (loginUser.fulfilled.match(resultAction)) {
+				clearTimeout(loadingTimeout);
+
 				toast({
 					title: "Logged In Successfully",
 				});
 				navigate("/dashboard");
 			} else {
+				clearTimeout(loadingTimeout);
+
 				form.resetField("password");
 				toast({
 					title: resultAction.payload as string,
@@ -56,6 +59,7 @@ const LoginForm = () => {
 				});
 			}
 		} catch (error) {
+			clearTimeout(loadingTimeout);
 			form.resetField("password");
 		}
 	}
