@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { AppDispatch, RootState } from "@/store";
 import { registerUser } from "@/store/features/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const RegisterForm = () => {
 	const { toast } = useToast();
@@ -33,27 +34,41 @@ const RegisterForm = () => {
 			location: "",
 		},
 	});
-	async function onSubmit(values: z.infer<typeof registerFormSchema>) {
-		const loadingTimeout = setTimeout(() => {
-			if (isLoading) {
+
+	useEffect(() => {
+		if (isLoading) {
+			const loadingTimeout = setTimeout(() => {
 				toast({
 					title: "Please be patient",
 					description:
 						"Due to free hosting, initial connection may take up to 30 seconds while the server is starting up. Your request is being processed...",
 				});
-			}
-		}, 3000);
+			}, 3000);
+	
+			return () => clearTimeout(loadingTimeout); // Czyścimy timeout, jeśli `isLoading` zmieni się wcześniej
+		}
+	}, [isLoading]);
+	async function onSubmit(values: z.infer<typeof registerFormSchema>) {
+		// const loadingTimeout = setTimeout(() => {
+		// 	if (isLoading) {
+		// 		toast({
+		// 			title: "Please be patient",
+		// 			description:
+		// 				"Due to free hosting, initial connection may take up to 30 seconds while the server is starting up. Your request is being processed...",
+		// 		});
+		// 	}
+		// }, 3000);
 		try {
 			const resultAction = await dispatch(registerUser(values));
 			if (registerUser.fulfilled.match(resultAction)) {
-				clearTimeout(loadingTimeout);
+				// clearTimeout(loadingTimeout);
 
 				toast({
 					title: "Registered in successfully",
 				});
 				navigate("/dashboard");
 			} else {
-				clearTimeout(loadingTimeout);
+				// clearTimeout(loadingTimeout);
 
 				toast({
 					title: resultAction.payload as string,
@@ -61,7 +76,7 @@ const RegisterForm = () => {
 				});
 			}
 		} catch (error) {
-			clearTimeout(loadingTimeout);
+			// clearTimeout(loadingTimeout);
 
 			console.log(error);
 		}

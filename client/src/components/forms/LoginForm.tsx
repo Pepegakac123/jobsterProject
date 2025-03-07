@@ -17,6 +17,7 @@ import type { AppDispatch, RootState } from "@/store";
 import { useToast } from "@/hooks/use-toast";
 import { loginUser } from "@/store/features/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const LoginForm = () => {
 	const { toast } = useToast();
@@ -30,27 +31,42 @@ const LoginForm = () => {
 			password: "",
 		},
 	});
-	async function onSubmit(values: z.infer<typeof loginFormSchema>) {
-		const loadingTimeout = setTimeout(() => {
+
+	useEffect(() => {
 			if (isLoading) {
-				toast({
-					title: "Please be patient",
-					description:
-						"Due to free hosting, initial connection may take up to 30 seconds while the server is starting up. Your request is being processed...",
-				});
+				const loadingTimeout = setTimeout(() => {
+					toast({
+						title: "Please be patient",
+						description:
+							"Due to free hosting, initial connection may take up to 30 seconds while the server is starting up. Your request is being processed...",
+					});
+				}, 3000);
+		
+				return () => clearTimeout(loadingTimeout); // Czyścimy timeout, jeśli `isLoading` zmieni się wcześniej
 			}
-		}, 3000);
+		}, [isLoading]);
+
+	async function onSubmit(values: z.infer<typeof loginFormSchema>) {
+		// const loadingTimeout = setTimeout(() => {
+		// 	if (isLoading) {
+		// 		toast({
+		// 			title: "Please be patient",
+		// 			description:
+		// 				"Due to free hosting, initial connection may take up to 30 seconds while the server is starting up. Your request is being processed...",
+		// 		});
+		// 	}
+		// }, 3000);
 		try {
 			const resultAction = await dispatch(loginUser(values));
 			if (loginUser.fulfilled.match(resultAction)) {
-				clearTimeout(loadingTimeout);
+				// clearTimeout(loadingTimeout);
 
 				toast({
 					title: "Logged In Successfully",
 				});
 				navigate("/dashboard");
 			} else {
-				clearTimeout(loadingTimeout);
+				// clearTimeout(loadingTimeout);
 
 				form.resetField("password");
 				toast({
@@ -59,7 +75,7 @@ const LoginForm = () => {
 				});
 			}
 		} catch (error) {
-			clearTimeout(loadingTimeout);
+			// clearTimeout(loadingTimeout);
 			form.resetField("password");
 		}
 	}
